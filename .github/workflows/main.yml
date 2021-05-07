@@ -31,10 +31,7 @@ jobs:
       - uses: hecrj/setup-rust-action@v1
         with:
           rust-version: nightly-2020-03-19
-      
-      - name: wasm-unknown-unknown
-        run: \
-          rustup target add wasm32-unknown-unknown
+          components: wasm32-unknown-unknown
 
       - name: Install and Build 🔧 
         run: |
