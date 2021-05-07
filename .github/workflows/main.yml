@@ -32,11 +32,9 @@ jobs:
         with:
           toolchain: stable
       
-      - name: wasm-pack-action
-        uses: jetli/wasm-pack-action@v0.3.0
-        with:
-          # Optional version of wasm-pack to install (eg. "v0.9.1", "latest")
-          version: latest
+      - name: wasm-unknown-unknown
+        run: \
+          rustup target add wasm32-unknown-unknown
 
       - name: Install and Build 🔧 
         run: |
