@@ -35,7 +35,7 @@ jobs:
           target: wasm32-unknown-unknown
       
       - run: \
-         sh source "$HOME/.cargo/env"
+         . "$HOME/.cargo/env"
 
       - name: Install and Build 🔧 
         run: |
