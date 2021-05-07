@@ -34,7 +34,6 @@ jobs:
       
       - name: wasm-unknown-unknown
         run: \
-          source $HOME/.cargo/env
           rustup target add wasm32-unknown-unknown
 
       - name: Install and Build 🔧 
