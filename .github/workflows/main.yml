@@ -33,6 +33,9 @@ jobs:
           profile: minimal
           toolchain: nightly
           target: wasm32-unknown-unknown
+      
+      - run: \
+         sh source "$HOME/.cargo/env"
 
       - name: Install and Build 🔧 
         run: |
