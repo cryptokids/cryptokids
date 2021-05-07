@@ -31,9 +31,11 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          components: rustup
       
       - name: wasm-unknown-unknown
         run: \
+          source $HOME/.cargo/env
           rustup target add wasm32-unknown-unknown
 
       - name: Install and Build 🔧 
