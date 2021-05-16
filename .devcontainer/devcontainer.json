@@ -11,6 +11,8 @@
 
   // Set *default* container specific settings.json values on container create.
   "settings": { 
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
     "terminal.integrated.shell.linux": null,
     "rust-client.rustupPath": "~/.cargo/bin/rustup"
   },

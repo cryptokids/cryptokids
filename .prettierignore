@@ -2,3 +2,6 @@ contract
 neardev
 dist
 .cache
+.devcontainer
+.github
+src-js

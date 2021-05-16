@@ -9,4 +9,5 @@ RUN /bin/bash -c "source $HOME/.cargo/env \
     && rustup component add rls rust-analysis rust-src \
     && rustup target add wasm32-unknown-unknown"
 
-RUN npm install -g near-cli
+RUN npm install -g near-cli eslint prettier
+
