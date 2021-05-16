@@ -1,0 +1,12 @@
+FROM node:14-buster
+
+# Install near-cli
+RUN npm install -g near-cli
+
+# Install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+RUN /bin/bash -c "source $HOME/.cargo/env \
+    && rustup component add rls rust-analysis rust-src \
+    && rustup target add wasm32-unknown-unknown"
+
+RUN npm install -g near-cli
