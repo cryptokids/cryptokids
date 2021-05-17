@@ -42,9 +42,16 @@ jobs:
         run: |
           yarn install
           yarn build
+      
+      - name: Deploy Smart-Contract 🧳
+        run: |
+          yarn dev:deploy:contract
   
-      - name: Deploy 🚀
+      - name: Deploy Front-End 🚀
         uses: JamesIves/github-pages-deploy-action@3.7.1
+        if: ${{ github.event_name == 'push' }}
+        env: 
+          NODE_ENV: 'development'
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
