@@ -50,11 +50,13 @@ jobs:
         env:
           NPM_CONFIG_PREFIX: "~/.npm-global"
         run: |
+          global_path = echo npm list -g | head -1
+          echo 'Global path is: ' + global_path
           npm install -g near-cli
-          . $HOME/.npm-global/bin:$PATH
+          . $global_path:$PATH
           echo 'Path is: ' + $PATH
           near add-key cryptokids.testnet ${{ secrets.TESTNET_ACCESS_KEY }}
-          npm run build:contract:debug && npm run dev:deploy:contract
+          npm run build:contract:debug && near deploy --accountId cryptokids.testnet
   
       - name: Deploy Front-End 🚀
         uses: JamesIves/github-pages-deploy-action@3.7.1
