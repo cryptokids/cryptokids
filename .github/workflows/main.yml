@@ -41,6 +41,7 @@ jobs:
       - name: Install and Build 🔧 
         env:
           NODE_ENV: 'development'
+          CONTRACT_NAME: 'cryptokids.testnet'
         run: |
           yarn install
           yarn build
