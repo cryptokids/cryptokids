@@ -47,7 +47,7 @@ jobs:
       
       - name: Deploy Smart-Contract 🧳
         run: |
-          near add-key cryptokids.testnet ${{ near.ACCESS_KEY }}
+          near add-key cryptokids.testnet ${{ secrets.ACCESS_KEY }}
           npm run build:contract:debug && npm run dev:deploy:contract
   
       - name: Deploy Front-End 🚀
