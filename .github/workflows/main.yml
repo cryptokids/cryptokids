@@ -47,16 +47,12 @@ jobs:
       
       - name: Deploy Smart-Contract 🧳
         if: ${{ github.event_name == 'push' }}  
-        env:
-          NPM_CONFIG_PREFIX: "~/.npm-global"
         run: |
-          global_path=$(npm list -g | head -1)
-          . $global_path
-          
-          echo 'Global path is: ' + $global_path
-          echo 'Path is: ' + $PATH
-          
+          mkdir "${HOME}/.npm-packages"
+          npm config set prefix "${HOME}/.npm-packages"          
           npm install -g near-cli
+          NPM_PACKAGES="${HOME}/.npm-packages"
+          export PATH="$PATH:$NPM_PACKAGES/bin"
           near add-key cryptokids.testnet ${{ secrets.TESTNET_ACCESS_KEY }}
           npm run build:contract:debug && near deploy --accountId cryptokids.testnet
   
