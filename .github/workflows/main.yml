@@ -48,8 +48,8 @@ jobs:
       - name: Deploy Smart-Contract 🧳
         if: ${{ github.event_name == 'push' }}  
         run: |
-          which near
-          near add-key cryptokids.testnet ${{ secrets.ACCESS_KEY }}
+          echo ${{ secrets.TESTNET_ACCESS_KEY }}
+          near add-key cryptokids.testnet ${{ secrets.TESTNET_ACCESS_KEY }}
           npm run build:contract:debug && npm run dev:deploy:contract
   
       - name: Deploy Front-End 🚀
