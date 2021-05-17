@@ -51,9 +51,8 @@ jobs:
           NPM_CONFIG_PREFIX: "~/.npm-global"
         run: |
           npm install -g near-cli
-          echo $PATH
-          . $HOME/.npm-packages/bin:$PATH
-          echo $PATH
+          . $HOME/.npm-global/bin:$PATH
+          echo 'Path is: ' + $PATH
           near add-key cryptokids.testnet ${{ secrets.TESTNET_ACCESS_KEY }}
           npm run build:contract:debug && npm run dev:deploy:contract
   
