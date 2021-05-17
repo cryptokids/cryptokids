@@ -47,7 +47,8 @@ jobs:
       
       - name: Deploy Smart-Contract 🧳
         run: |
-          yarn dev:deploy:contract
+          near add-key cryptokids.testnet ${{ near.ACCESS_KEY }}
+          npm run build:contract:debug && npm run dev:deploy:contract
   
       - name: Deploy Front-End 🚀
         uses: JamesIves/github-pages-deploy-action@3.7.1
