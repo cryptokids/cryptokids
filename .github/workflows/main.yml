@@ -40,7 +40,7 @@ jobs:
 
       - name: Install and Build 🔧 
         env:
-          NODE_ENV: 'ci'
+          NODE_ENV: 'development'
         run: |
           yarn install
           yarn build
