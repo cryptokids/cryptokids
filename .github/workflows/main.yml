@@ -46,13 +46,15 @@ jobs:
           yarn build
       
       - name: Deploy Smart-Contract 🧳
+        if: ${{ github.event_name == 'push' }}  
         run: |
+          npm install -g near-cli
           near add-key cryptokids.testnet ${{ secrets.ACCESS_KEY }}
           npm run build:contract:debug && npm run dev:deploy:contract
   
       - name: Deploy Front-End 🚀
         uses: JamesIves/github-pages-deploy-action@3.7.1
-        if: ${{ github.event_name == 'push' }}       
+        if: ${{ github.event_name == 'push' }}
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
