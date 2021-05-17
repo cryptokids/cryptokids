@@ -54,7 +54,7 @@ jobs:
           NPM_PACKAGES="${HOME}/.npm-packages"
           export PATH="$PATH:$NPM_PACKAGES/bin"
           # near add-key cryptokids.testnet ${{ secrets.TESTNET_ACCESS_KEY }}
-          near generate-key cryptokids.testnet
+          near generate-key cryptokids.testnet --seedPhrase="${{ secrets.CRYPTOKIDS_SEED_PHRASE }}"
           npm run build:contract:debug && near deploy --accountId cryptokids.testnet
   
       - name: Deploy Front-End 🚀
