@@ -49,10 +49,9 @@ jobs:
   
       - name: Deploy Front-End 🚀
         uses: JamesIves/github-pages-deploy-action@3.7.1
-        if: ${{ github.event_name == 'push' }}
-        env: 
-          NODE_ENV: 'development'
+        if: ${{ github.event_name == 'push' }}       
         with:
+          NODE_ENV: 'development'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
           FOLDER: dist
