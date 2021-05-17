@@ -53,7 +53,8 @@ jobs:
           npm install -g near-cli
           NPM_PACKAGES="${HOME}/.npm-packages"
           export PATH="$PATH:$NPM_PACKAGES/bin"
-          near add-key cryptokids.testnet ${{ secrets.TESTNET_ACCESS_KEY }}
+          # near add-key cryptokids.testnet ${{ secrets.TESTNET_ACCESS_KEY }}
+          near generate-key cryptokids.testnet
           npm run build:contract:debug && near deploy --accountId cryptokids.testnet
   
       - name: Deploy Front-End 🚀
