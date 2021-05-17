@@ -47,8 +47,10 @@ jobs:
       
       - name: Deploy Smart-Contract 🧳
         if: ${{ github.event_name == 'push' }}  
+        env:
+          NPM_CONFIG_PREFIX: "~/.npm-global"
         run: |
-          echo ${{ secrets.TESTNET_ACCESS_KEY }}
+          npm install -g near-cli
           near add-key cryptokids.testnet ${{ secrets.TESTNET_ACCESS_KEY }}
           npm run build:contract:debug && npm run dev:deploy:contract
   
