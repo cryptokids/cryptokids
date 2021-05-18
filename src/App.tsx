@@ -1,33 +1,29 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { appStore, onAppMount } from './state/app'
-import { Wallet } from './state/near'
+import React from 'react'
 
 import './global.css'
-import Welcome from './components/Welcome'
 import Home from './components/Home'
+import { useRecoilValueLoadable } from 'recoil'
+import { nearState } from './state/near'
+import { AuthProvider } from './components/AuthProvider'
+import { useRecoilValue } from 'recoil'
+import { isLoggedInState } from './state/authentication'
+import Welcome from './components/Welcome'
 
 const App: React.FC = () => {
-  const { state, dispatch } = useContext(appStore)
+  // Load near library
+  const loadNear = useRecoilValueLoadable(nearState)
+  const isLoggedIn = useRecoilValue(isLoggedInState)
 
-  const { wallet }: { wallet: Wallet } = state
-  console.log('state', state)
-
-  const onMount = () => {
-    dispatch(onAppMount())
-  }
-  useEffect(onMount, [])
-
-  if (wallet && wallet.isSignedIn()) {
-    return <Home />
-  } else {
-    return (
-      <Welcome
-        login={() => {
-          wallet.signIn()
-        }}
-      />
-    )
-  }
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      {loadNear.state == 'hasValue' && loadNear.contents && (
+        <AuthProvider>
+          {!isLoggedIn && <Welcome />}
+          {isLoggedIn && <Home />}
+        </AuthProvider>
+      )}
+    </React.Suspense>
+  )
 }
 
 export default App

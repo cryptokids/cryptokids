@@ -1,12 +1,7 @@
 import * as nearAPI from 'near-api-js'
-import { WalletConnection, Account } from 'near-api-js'
-import { getWallet, contractName, getContract } from '../foundation/near-utils'
-
-export interface Wallet extends WalletConnection {
-  signIn: () => void
-}
-
-export { Account }
+import { getWallet, getContract } from '../foundation/near-utils'
+import { atom, selector } from 'recoil'
+import { WalletConnection } from 'near-api-js'
 
 export const {
   utils: {
@@ -14,40 +9,88 @@ export const {
   },
 } = nearAPI
 
-export const getGreating =
-  (account: Account, accountId: string) =>
-  async ({ update }: { update: (key: string, value: any) => void }) => {
-    const contract = getContract(account)
-    const greeting = await contract.get_greeting({ account_id: accountId })
-    update('app.greeting', greeting)
-  }
+export interface IWallet extends WalletConnection {}
 
-export const initNear =
-  () =>
-  async ({ update }: { update: (key: string, value: any) => void }) => {
+export interface IAccount extends nearAPI.Account {}
+
+export interface IContract {
+  readonly contractId: string
+
+  getGreeting({ accountId }: { accountId: string }): Promise<string>
+  setGreeting({
+    accountId,
+    greeting,
+  }: {
+    accountId: string
+    greeting: string
+  }): Promise<boolean>
+}
+
+export interface INear {
+  account: IAccount | null
+  contract: IContract | null
+  near: nearAPI.Near
+  wallet: IWallet
+}
+
+const initNear = selector<INear>({
+  key: 'nearState/init',
+  get: async () => {
     const { near, wallet, contractAccount } = await getWallet()
-    let wrapWallet = wallet as Wallet
 
-    wrapWallet.signIn = () => {
-      wrapWallet.requestSignIn(contractName, 'Blah Blah')
-    }
-    const signOut = wrapWallet.signOut
-    wrapWallet.signOut = () => {
-      signOut.call(wallet)
-      update('wallet.signedIn', false)
-      update('', { account: null })
-      update('app.tab', 1)
-    }
-
-    let account
-    if (wrapWallet.isSignedIn()) {
-      account = wrapWallet.account()
+    let account: IAccount | null = null
+    if (wallet.isSignedIn()) {
+      account = wallet.account() as IAccount
       // wrapWallet.balance = formatNearAmount(
       //   (await wrapWallet.account().getAccountBalance()).available,
       //   4
       // )
-      await update('', { near, wallet: wrapWallet, contractAccount, account })
     }
+    return {
+      account,
+      contractAccount,
+      near,
+      wallet: wallet,
+      contract: account && new Contract(getContract(account)),
+    }
+  },
+  dangerouslyAllowMutability: true,
+})
 
-    await update('', { near, wallet: wrapWallet, contractAccount, account })
+export const nearState = atom<INear>({
+  key: 'nearState',
+  default: initNear,
+  dangerouslyAllowMutability: true,
+})
+
+class Contract implements IContract {
+  readonly contract: nearAPI.Contract
+
+  constructor(contract: nearAPI.Contract) {
+    this.contract = contract
   }
+
+  get contractId(): string {
+    return this.contract.contractId
+  }
+
+  async getGreeting({ accountId }: { accountId: string }): Promise<string> {
+    // TODO: How to do this call in type safe way?
+    return await this.contract.get_greeting({ account_id: accountId })
+  }
+
+  async setGreeting({
+    accountId,
+    greeting,
+  }: {
+    accountId: string
+    greeting: string
+  }): Promise<boolean> {
+    // TODO: How to do this call in type safe way?
+    await this.contract.set_greeting({
+      account_id: accountId,
+      message: greeting,
+    })
+    return true
+  }
+}

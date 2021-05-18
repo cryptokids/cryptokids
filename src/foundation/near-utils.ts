@@ -138,7 +138,7 @@ export const hasKey = async (near, accountId, publicKey) => {
   return false
 }
 
-export const isAccountTaken = async (accountId) => {
+export const isAccountTaken = async (accountId: string) => {
   const account = new nearAPI.Account(near.connection, accountId)
   try {
     await account.state()

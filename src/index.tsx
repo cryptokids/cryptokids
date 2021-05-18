@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { AppProvider } from './state/app'
+import { RecoilRoot } from 'recoil'
 import App from './App'
 
 ReactDOM.render(
-  <AppProvider>
+  <RecoilRoot>
     <App />
-  </AppProvider>,
+  </RecoilRoot>,
   document.querySelector('#root')
 )

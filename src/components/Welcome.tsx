@@ -1,10 +1,9 @@
 import React from 'react'
+import { SignInLink } from './AuthProvider'
 
-type Props = {
-  login: () => void
-}
+type Props = {}
 
-const Welcome: React.FC<Props> = ({ login }) => {
+const Welcome: React.FC<Props> = () => {
   return (
     <main>
       <h1>Welcome to CryptoKids!</h1>
@@ -16,7 +15,9 @@ const Welcome: React.FC<Props> = ({ login }) => {
       <p>The App is under development right now.</p>
       <p>Go ahead and click the button below to try it out:</p>
       <p style={{ textAlign: 'center', marginTop: '2.5em' }}>
-        <button onClick={login}>Sign in</button>
+        <SignInLink>
+          <button>Sign in</button>
+        </SignInLink>
       </p>
     </main>
   )
