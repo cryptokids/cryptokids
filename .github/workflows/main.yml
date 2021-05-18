@@ -39,19 +39,28 @@ jobs:
           rustup target add wasm32-unknown-unknown
 
       - name: Install and Build 🔧 
+        env:
+          NODE_ENV: 'development'
+          CONTRACT_NAME: 'cryptokids.testnet'
         run: |
           yarn install
           yarn build
       
       - name: Deploy Smart-Contract 🧳
+        if: ${{ github.event_name == 'push' }}  
         run: |
-          yarn dev:deploy:contract
+          mkdir "${HOME}/.npm-packages"
+          npm config set prefix "${HOME}/.npm-packages"          
+          npm install -g near-cli
+          NPM_PACKAGES="${HOME}/.npm-packages"
+          export PATH="$PATH:$NPM_PACKAGES/bin"
+          # near add-key cryptokids.testnet ${{ secrets.TESTNET_ACCESS_KEY }}
+          near generate-key cryptokids.testnet --seedPhrase="${{ secrets.CRYPTOKIDS_SEED_PHRASE }}"
+          npm run build:contract:debug && near deploy --accountId cryptokids.testnet
   
       - name: Deploy Front-End 🚀
         uses: JamesIves/github-pages-deploy-action@3.7.1
         if: ${{ github.event_name == 'push' }}
-        env: 
-          NODE_ENV: 'development'
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
