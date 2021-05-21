@@ -1,6 +1,6 @@
 import React from 'react'
 
-import './global.css'
+import './styles/tailwind.css';
 import Home from './components/Home'
 import { useRecoilValueLoadable } from 'recoil'
 import { nearState } from './state/near'
