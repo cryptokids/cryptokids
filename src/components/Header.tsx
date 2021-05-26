@@ -33,7 +33,10 @@ const Header: React.FC = () => {
                         itemIdx === 0 ? (
                           <Fragment key={item}>
                             {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-                            <a href="#" className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
+                            <a
+                              href="#"
+                              className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium"
+                            >
                               {item}
                             </a>
                           </Fragment>
@@ -87,34 +90,24 @@ const Header: React.FC = () => {
                             >
                               {profile.map((item) => (
                                 <Menu.Item key={item}>
-                                  {({ active }) => (
-                                    <a
-                                      href="#"
-                                      className={classNames(
-                                        active ? 'bg-gray-100' : '',
-                                        'block px-4 py-2 text-sm text-gray-700'
-                                      )}
-                                    >
-                                      {item}
-                                    </a>
-                                  )}
+                                  <a
+                                    href="#"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                  >
+                                    {item}
+                                  </a>
                                 </Menu.Item>
                               ))}
-                              <Menu.Item key={"Sign out"}>
-                                  {({ active }) => (
-                                    <SignOutLink>
-                                        <a
-                                        href="#"
-                                        className={classNames(
-                                            active ? 'bg-gray-100' : '',
-                                            'block px-4 py-2 text-sm text-gray-700'
-                                        )}
-                                            >
-                                        {"Sign out"}
-                                        </a>
-                                    </SignOutLink>
-                                  )}
-                                </Menu.Item>
+                              <Menu.Item key={'Sign out'}>
+                                <SignOutLink>
+                                  <a
+                                    href="#"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                  >
+                                    {'Sign out'}
+                                  </a>
+                                </SignOutLink>
+                              </Menu.Item>
                             </Menu.Items>
                           </Transition>
                         </>
@@ -142,7 +135,10 @@ const Header: React.FC = () => {
                   itemIdx === 0 ? (
                     <Fragment key={item}>
                       {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-                      <a href="#" className="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium">
+                      <a
+                        href="#"
+                        className="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium"
+                      >
                         {item}
                       </a>
                     </Fragment>
@@ -167,8 +163,12 @@ const Header: React.FC = () => {
                     />
                   </div>
                   <div className="ml-3">
-                    <div className="text-base font-medium leading-none text-white">Tom Cook</div>
-                    <div className="text-sm font-medium leading-none text-gray-400">tom@example.com</div>
+                    <div className="text-base font-medium leading-none text-white">
+                      Tom Cook
+                    </div>
+                    <div className="text-sm font-medium leading-none text-gray-400">
+                      tom@example.com
+                    </div>
                   </div>
                   <button className="ml-auto bg-gray-800 flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                     <span className="sr-only">View notifications</span>
@@ -185,21 +185,21 @@ const Header: React.FC = () => {
                       {item}
                     </a>
                   ))}
-                    <SignOutLink>
-                        <a className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700" 
-                        key="Sign out"
-                        href="#">
-                        Sign out
-                        </a>
-                    </SignOutLink>
+                  <SignOutLink>
+                    <a
+                      className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
+                      key="Sign out"
+                      href="#"
+                    >
+                      Sign out
+                    </a>
+                  </SignOutLink>
                 </div>
               </div>
             </Disclosure.Panel>
           </>
         )}
       </Disclosure>
-
-      
     </div>
   )
 }

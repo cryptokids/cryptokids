@@ -14,7 +14,9 @@ const GreetingForm: React.FC<FormProps> = ({ greeting, onSave }) => {
         <div className="md:grid md:grid-cols-3 md:gap-6">
           <div className="md:col-span-1">
             <div className="px-4 sm:px-0">
-              <h3 className="text-lg font-medium leading-6 text-gray-900">Greeting</h3>
+              <h3 className="text-lg font-medium leading-6 text-gray-900">
+                Greeting
+              </h3>
               <p className="mt-1 text-sm text-gray-600">
                 You can change the greeting here.
               </p>
@@ -37,11 +39,12 @@ const GreetingForm: React.FC<FormProps> = ({ greeting, onSave }) => {
                 try {
                   // make an update call to the smart contract
                   await onSave(newGreeting)
+                  setButtonDisabled(true)
                 } catch (e) {
                   alert(
                     'Something went wrong! ' +
-                    'Maybe you need to sign out and back in? ' +
-                    'Check your browser console for more info.'
+                      'Maybe you need to sign out and back in? ' +
+                      'Check your browser console for more info.'
                   )
                   throw e
                 } finally {
@@ -56,7 +59,12 @@ const GreetingForm: React.FC<FormProps> = ({ greeting, onSave }) => {
                     <div className="px-4 py-3 bg-gray-50 text-left sm:px-6">
                       <div className="grid grid-cols-6 gap-6">
                         <div className="col-span-6 sm:col-span-4">
-                          <label htmlFor="greeting" className="block text-sm font-medium text-gray-700">Change greeting</label>
+                          <label
+                            htmlFor="greeting"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Change greeting
+                          </label>
                           <input
                             type="text"
                             name="greeting"
@@ -64,17 +72,19 @@ const GreetingForm: React.FC<FormProps> = ({ greeting, onSave }) => {
                             autoComplete="off"
                             defaultValue={greeting}
                             className="mt-1 px-1 py-2 focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                            onChange={(e) => setButtonDisabled(e.target.value === greeting)}
+                            onChange={(e) =>
+                              setButtonDisabled(e.target.value === greeting)
+                            }
                           />
                         </div>
                         <div className="px-4 py-6 bg-gray-50 text-right sm:px-6">
                           <button
                             type="submit"
-                            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                             disabled={buttonDisabled}
                           >
                             Save
-                        </button>
+                          </button>
                         </div>
                       </div>
                     </div>
