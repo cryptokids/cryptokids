@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { Redirect } from 'react-router'
 import { useSetRecoilState } from 'recoil'
 import { useRecoilValue } from 'recoil'
 import { contractName } from '../foundation/near-utils'
@@ -46,7 +47,7 @@ export const SignOutLink: React.FC<SignOutLinkProps> = ({
     onSignOut && onSignOut()
   }
   return (
-    <React.Fragment>
+    <>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
           return React.cloneElement(child, {
@@ -56,7 +57,7 @@ export const SignOutLink: React.FC<SignOutLinkProps> = ({
           return child
         }
       })}
-    </React.Fragment>
+    </>
   )
 }
 
@@ -87,4 +88,21 @@ export const SignInLink: React.FC<SignInLinkProps> = ({
       })}
     </React.Fragment>
   )
+}
+
+type AuthRouteProps = {
+  authFallback?: string // Route for auth redirect
+}
+
+export const AuthRoute: React.FC<AuthRouteProps> = ({
+  children,
+  authFallback = '/',
+}) => {
+  const isLoggedIn = useRecoilValue(isLoggedInState)
+
+  if (!isLoggedIn) {
+    return <Redirect to={authFallback} />
+  }
+
+  return <>{children}</>
 }
