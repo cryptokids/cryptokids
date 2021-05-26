@@ -25,7 +25,7 @@ const Header: React.FC = () => {
                     <img
                       className="h-8 w-8"
                       src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
-                      alt="Workflow"
+                      alt="CryptoKids"
                     />
                   </div>
                   <div className="hidden md:block">

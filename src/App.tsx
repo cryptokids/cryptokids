@@ -8,6 +8,8 @@ import { AuthProvider } from './components/AuthProvider'
 import { useRecoilValue } from 'recoil'
 import { isLoggedInState } from './state/authentication'
 import Welcome from './components/Welcome'
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 const App: React.FC = () => {
   // Load near library
@@ -15,14 +17,22 @@ const App: React.FC = () => {
   const isLoggedIn = useRecoilValue(isLoggedInState)
 
   return (
-    <React.Suspense fallback={<div>Loading...</div>}>
-      {loadNear.state == 'hasValue' && loadNear.contents && (
-        <AuthProvider>
-          {!isLoggedIn && <Welcome />}
-          {isLoggedIn && <Home />}
-        </AuthProvider>
-      )}
-    </React.Suspense>
+    <>
+    <div className="flex flex-col h-screen">
+      <Header />
+      <main className="flex-grow">
+        <React.Suspense fallback={<div>Loading...</div>}>
+          {loadNear.state == 'hasValue' && loadNear.contents && (
+            <AuthProvider>
+              {!isLoggedIn && <Welcome />}
+              {isLoggedIn && <Home />}
+            </AuthProvider>
+          )}
+        </React.Suspense>
+      </main>
+      <Footer />
+      </div>
+    </>
   )
 }
 

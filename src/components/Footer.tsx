@@ -10,13 +10,13 @@ const Footer: React.FC = () => {
           <div className="mt-4 md:mt-0 flex flex-col md:flex-row">
             <nav className="flex-1 flex flex-col items-center justify-center md:items-end md:border-r border-gray-100 md:pr-5">
               <a aria-current="page" href="#" className="hover:text-gray-700 dark:hover:text-white">
-                Components
+                About
                       </a>
               <a aria-current="page" href="#" className="hover:text-gray-700 dark:hover:text-white">
                 Contacts
                       </a>
               <a aria-current="page" href="#" className="hover:text-gray-700 dark:hover:text-white">
-                Customization
+                Help
                       </a>
             </nav>
             <div className="md:hidden mt-4 mx-auto w-11 h-px rounded-full">
@@ -46,12 +46,12 @@ const Footer: React.FC = () => {
             <div className="mt-7 md:mt-0 flex-1 flex flex-col items-center justify-center md:items-start md:pl-5">
               <span className="">
                 © 2021
-                      </span>
+              </span>
               <span className="mt-7 md:mt-1">
                 <span className="">Created by </span>
                 <a className="underline hover:text-primary-gray-20" href="https://github.com/deus42/cryptokids/graphs/contributors">
                   Alex & Alexey
-                          </a>
+                </a>
               </span>
             </div>
           </div>
