@@ -56,8 +56,8 @@ const Dashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           {/* Replace with your content */}
           <div className="px-4 py-6 sm:px-0">
-                <div className="bg-white dark:bg-gray-800 w-full mx-auto p-8">
-                  <img src="/icons/rocket.svg" className="h-10 w-10 mb-8 m-auto"/>
+                <div className="bg-white dark:bg-gray-800 w-full mx-auto p-8 rounded-lg" >
+                  {/* <img src="/icons/rocket.svg" className="h-10 w-10 mb-8 m-auto"/> */}
                   <p className="text-gray-600 dark:text-white w-full md:w-2/3 m-auto text-center text-lg md:text-3xl">
                       <span className="font-bold text-indigo-500">
                           “

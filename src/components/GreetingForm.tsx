@@ -54,27 +54,28 @@ const GreetingForm: React.FC<FormProps> = ({ greeting, onSave }) => {
                 <div className="shadow sm:rounded-md sm:overflow-hidden">
                   <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
                     <div className="px-4 py-3 bg-gray-50 text-left sm:px-6">
-
-                      <div className="col-span-6 sm:col-span-4">
-                        <label htmlFor="greeting" className="block text-sm font-medium text-gray-700">Change greeting</label>
-                        <input
-                          type="text"
-                          name="greeting"
-                          id="greeting"
-                          autoComplete="off"
-                          defaultValue={greeting}
-                          className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                          onChange={(e) => setButtonDisabled(e.target.value === greeting)}
-                        />
-                      </div>
-                      <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                        <button
-                          type="submit"
-                          className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                          disabled={buttonDisabled}
-                        >
-                          Save
+                      <div className="grid grid-cols-6 gap-6">
+                        <div className="col-span-6 sm:col-span-4">
+                          <label htmlFor="greeting" className="block text-sm font-medium text-gray-700">Change greeting</label>
+                          <input
+                            type="text"
+                            name="greeting"
+                            id="greeting"
+                            autoComplete="off"
+                            defaultValue={greeting}
+                            className="mt-1 px-1 py-2 focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                            onChange={(e) => setButtonDisabled(e.target.value === greeting)}
+                          />
+                        </div>
+                        <div className="px-4 py-6 bg-gray-50 text-right sm:px-6">
+                          <button
+                            type="submit"
+                            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            disabled={buttonDisabled}
+                          >
+                            Save
                         </button>
+                        </div>
                       </div>
                     </div>
                   </div>
