@@ -1,11 +1,10 @@
 import { useRecoilValue, useRecoilState } from 'recoil'
 import { userState } from '../state/authentication'
 import { greetingState } from '../state/greeting'
-import { IContract, nearState } from '../state/near'
+import { IContract, nearState, networkId } from '../state/near'
 import GreetingForm from '../components/GreetingForm'
 import React, { useCallback, useEffect } from 'react'
 import { toast } from 'react-toastify'
-import { networkId } from '../foundation/near-utils'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')

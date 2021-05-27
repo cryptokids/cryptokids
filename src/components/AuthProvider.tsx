@@ -2,9 +2,8 @@ import React, { useEffect } from 'react'
 import { Redirect } from 'react-router'
 import { useSetRecoilState } from 'recoil'
 import { useRecoilValue } from 'recoil'
-import { contractName } from '../foundation/near-utils'
 import { isLoggedInState, userState } from '../state/authentication'
-import { nearState } from '../state/near'
+import { nearState, contractName } from '../state/near'
 
 type Props = {}
 

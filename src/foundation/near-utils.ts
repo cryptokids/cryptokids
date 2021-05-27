@@ -1,3 +1,4 @@
+/// Warning: Deprecated file, use as a reference
 import getConfig from '../config'
 import * as nearAPI from 'near-api-js'
 import { KeyPair } from 'near-api-js'

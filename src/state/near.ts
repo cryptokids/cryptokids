@@ -1,7 +1,9 @@
 import * as nearAPI from 'near-api-js'
-import { getWallet, getContract } from '../foundation/near-utils'
 import { atom, selector } from 'recoil'
 import { WalletConnection } from 'near-api-js'
+import getConfig from '../config'
+
+const { Near, keyStores, Account, WalletAccount } = nearAPI
 
 export const {
   utils: {
@@ -75,7 +77,7 @@ class Contract implements IContract {
   }
 
   async getGreeting({ accountId }: { accountId: string }): Promise<string> {
-    // TODO: How to do this call in type safe way?
+    // @ts-ignore: Near Contract generate methods at the runtime
     return await this.contract.get_greeting({ account_id: accountId })
   }
 
@@ -86,11 +88,55 @@ class Contract implements IContract {
     accountId: string
     greeting: string
   }): Promise<boolean> {
-    // TODO: How to do this call in type safe way?
+    // @ts-ignore: Near Contract generate methods at the runtime
     await this.contract.set_greeting({
       account_id: accountId,
       message: greeting,
     })
     return true
   }
+}
+
+// Near connection
+
+let contractMethods = {
+  changeMethods: ['set_greeting'],
+  viewMethods: ['get_greeting'],
+}
+
+export const {
+  networkId,
+  nodeUrl,
+  walletUrl,
+  contractName,
+}: {
+  networkId: string
+  nodeUrl: string
+  walletUrl?: string
+  contractName: string
+} = getConfig(process.env.NODE_ENV || 'development')
+
+export const contractId = contractName
+export const marketId = 'market.' + contractName
+
+const near = new Near({
+  networkId,
+  nodeUrl,
+  walletUrl,
+  deps: {
+    keyStore: new keyStores.BrowserLocalStorageKeyStore(),
+  },
+})
+
+const getWallet = async () => {
+  const wallet = new WalletAccount(near, null)
+
+  // walletAccount instance gets access key for contractId
+
+  const contractAccount = new Account(near.connection, contractName)
+  return { near, wallet, contractAccount }
+}
+
+function getContract(account: nearAPI.Account, methods = contractMethods) {
+  return new nearAPI.Contract(account, contractName, { ...methods })
 }
