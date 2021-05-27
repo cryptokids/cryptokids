@@ -4,21 +4,24 @@ import { useRecoilValueLoadable } from 'recoil'
 import { useRecoilValue } from 'recoil'
 import { ToastContainer } from 'react-toastify'
 import { Redirect, Route, Switch } from 'react-router'
-import { HashRouter } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import { nearState } from './state/near'
 import { AuthProvider, AuthRoute } from './components/AuthProvider'
-import { isLoggedInState } from './state/authentication'
+import { isLoggedInState, UserState } from './state/authentication'
 
 import 'react-toastify/dist/ReactToastify.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Welcome from './pages/Welcome'
 import Dashboard from './pages/Dashboard'
+import Marketplace from './pages/Marketplace'
+import Charities from './pages/Charities'
+import Activity from './pages/Activity'
 
 const App: React.FC = () => {
   // Load near library
   const loadNear = useRecoilValueLoadable(nearState)
-  const isLoggedIn = useRecoilValue(isLoggedInState)
+  const loggedInState = useRecoilValue(isLoggedInState)
 
   return (
     <>
@@ -28,22 +31,38 @@ const App: React.FC = () => {
           <React.Suspense fallback={<div>Loading...</div>}>
             {loadNear.state == 'hasValue' && loadNear.contents && (
               <AuthProvider>
-                <Header />
-                <main className="flex-grow">
-                  <HashRouter>
+                <BrowserRouter>
+                  <Header />
+                  <main className="flex-grow">
                     <Switch>
-                      <Route exact path="/home">
+                      <Route exact path="/marketplace">
+                        <Marketplace />
+                      </Route>
+                      <Route exact path="/dashboard">
                         <AuthRoute>
                           <Dashboard />
                         </AuthRoute>
                       </Route>
+                      <Route exact path="/activity">
+                        <Activity />
+                      </Route>
+                      <Route exact path="/charities">
+                        <Charities />
+                      </Route>
+                      <Route exact path="/welcome">
+                        <Welcome />
+                      </Route>
                       <Route exact path="/">
-                        {isLoggedIn ? <Redirect to="/home" /> : <Welcome />}
+                        {loggedInState != UserState.Anonymous ? (
+                          <Redirect to="/marketplace" />
+                        ) : (
+                          <Welcome />
+                        )}
                       </Route>
                     </Switch>
-                  </HashRouter>
-                </main>
-                <Footer />
+                  </main>
+                  <Footer />
+                </BrowserRouter>
               </AuthProvider>
             )}
           </React.Suspense>

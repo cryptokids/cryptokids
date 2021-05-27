@@ -9,7 +9,13 @@ export const userState = atom<IAccountData | null>({
   default: null,
 })
 
-export const isLoggedInState = atom<boolean>({
+export enum UserState {
+  Undefined = 0,
+  LogIn = 1,
+  Anonymous = 2,
+}
+
+export const isLoggedInState = atom<UserState>({
   key: 'isLoggedIn',
-  default: false,
+  default: UserState.Undefined,
 })
