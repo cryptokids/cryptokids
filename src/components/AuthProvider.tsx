@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router'
 import { useSetRecoilState } from 'recoil'
 import { useRecoilValue } from 'recoil'
-import { isLoggedInState, userState } from '../state/authentication'
+import { isLoggedInState, UserState, userState } from '../state/authentication'
 import { nearState, contractName } from '../state/near'
 
 type Props = {}
@@ -15,11 +15,11 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   useEffect(() => {
     if (wallet) {
       if (wallet.isSignedIn() && account) {
-        setLoggedIn(true)
         setUserState({ accountId: account.accountId })
+        setLoggedIn(UserState.LogIn)
       } else {
-        setLoggedIn(false)
         setUserState(null)
+        setLoggedIn(UserState.Anonymous)
       }
     }
   })
@@ -41,7 +41,7 @@ export const SignOutLink: React.FC<SignOutLinkProps> = ({
   const logout = () => {
     wallet.signOut()
     // Update local state, as we don't have a callback on a wallet itself
-    setLoggedIn(false)
+    setLoggedIn(UserState.Anonymous)
     setUserState(null)
     onSignOut && onSignOut()
   }
@@ -97,11 +97,14 @@ export const AuthRoute: React.FC<AuthRouteProps> = ({
   children,
   authFallback = '/',
 }) => {
-  const isLoggedIn = useRecoilValue(isLoggedInState)
+  const state = useRecoilValue(isLoggedInState)
 
-  if (!isLoggedIn) {
-    return <Redirect to={authFallback} />
+  switch (state) {
+    case UserState.Undefined:
+      return null
+    case UserState.Anonymous:
+      return <Redirect to={authFallback} />
+    case UserState.LogIn:
+      return <>{children}</>
   }
-
-  return <>{children}</>
 }
