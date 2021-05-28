@@ -35,21 +35,21 @@ const App: React.FC = () => {
                   <Header />
                   <main className="flex-grow">
                     <Switch>
-                      <Route exact path="/marketplace">
+                      <Route path="/marketplace">
                         <Marketplace />
                       </Route>
-                      <Route exact path="/dashboard">
+                      <Route path="/dashboard">
                         <AuthRoute>
                           <Dashboard />
                         </AuthRoute>
                       </Route>
-                      <Route exact path="/activity">
+                      <Route path="/activity">
                         <Activity />
                       </Route>
-                      <Route exact path="/charities">
+                      <Route path="/charities">
                         <Charities />
                       </Route>
-                      <Route exact path="/welcome">
+                      <Route path="/welcome">
                         <Welcome />
                       </Route>
                       <Route exact path="/">
