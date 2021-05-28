@@ -50,7 +50,12 @@ const Marketplace: React.FC = () => {
     <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 p-5">
       {nfts.map((nft) => {
         return (
-          <Card username={nft.username} title={nft.title} price={nft.price} />
+          <Card
+            key={nft.username + nft.title}
+            username={nft.username}
+            title={nft.title}
+            price={nft.price}
+          />
         )
       })}
     </div>

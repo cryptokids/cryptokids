@@ -155,9 +155,7 @@ const MobileAnonymousSettings: React.FC = () => {
 }
 
 const Header: React.FC = () => {
-  // const setUserState = useSetRecoilState(isLoggedInState)
   const loggedInState = useRecoilValue(isLoggedInState)
-  console.log(loggedInState)
 
   return (
     <div>
