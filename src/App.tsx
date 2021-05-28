@@ -4,7 +4,7 @@ import { useRecoilValueLoadable } from 'recoil'
 import { useRecoilValue } from 'recoil'
 import { ToastContainer } from 'react-toastify'
 import { Redirect, Route, Switch } from 'react-router'
-import { BrowserRouter } from 'react-router-dom'
+import { HashRouter } from 'react-router-dom'
 import { nearState } from './state/near'
 import { AuthProvider, AuthRoute } from './components/AuthProvider'
 import { isLoggedInState, UserState } from './state/authentication'
@@ -31,7 +31,7 @@ const App: React.FC = () => {
           <React.Suspense fallback={<div>Loading...</div>}>
             {loadNear.state == 'hasValue' && loadNear.contents && (
               <AuthProvider>
-                <BrowserRouter>
+                <HashRouter>
                   <Header />
                   <main className="flex-grow">
                     <Switch>
@@ -62,7 +62,7 @@ const App: React.FC = () => {
                     </Switch>
                   </main>
                   <Footer />
-                </BrowserRouter>
+                </HashRouter>
               </AuthProvider>
             )}
           </React.Suspense>
