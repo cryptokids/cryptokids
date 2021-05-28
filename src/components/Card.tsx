@@ -12,7 +12,7 @@ type Props = {
 const Card: React.FC<Props> = ({ username, title, price }) => {
   return (
     <div className="bg-white-900 shadow-md rounded p-3 hover:shadow-xl">
-      <div className="group relative">
+      <div className="group">
         <img
           className="w-full md:w-72 block rounded"
           src={'https://picsum.photos/640/400/?random' + username + title}
