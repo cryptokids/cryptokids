@@ -3,7 +3,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import { SignInLink, SignOutLink } from './AuthProvider'
 import React from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import { isLoggedInState, UserState } from '../state/authentication'
 
@@ -15,9 +15,9 @@ const navigation = [
 ]
 const profile = ['Your Profile', 'My Items', 'Settings']
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
-}
+// function classNames(...classes: string[]) {
+//   return classes.filter(Boolean).join(' ')
+// }
 
 const UserSettings: React.FC = () => {
   return (

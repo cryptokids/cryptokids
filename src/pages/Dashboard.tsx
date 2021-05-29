@@ -1,7 +1,7 @@
 import { useRecoilValue, useRecoilState } from 'recoil'
 import { userState } from '../state/authentication'
 import { greetingState } from '../state/greeting'
-import { IContract, nearState, networkId } from '../state/near'
+import { IGreetingContract, nearState, networkId } from '../state/near'
 import GreetingForm from '../components/GreetingForm'
 import React, { useCallback, useEffect } from 'react'
 import { toast } from 'react-toastify'
@@ -30,7 +30,7 @@ const Dashboard: React.FC = () => {
   )
 
   useEffect(() => {
-    async function loadGreeting(contract: IContract) {
+    async function loadGreeting(contract: IGreetingContract) {
       if (!userInfo) return
       const greeting = await contract.getGreeting({
         accountId: userInfo.accountId,
