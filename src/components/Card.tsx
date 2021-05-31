@@ -3,21 +3,18 @@ import React from 'react'
 type Props = {
   username: string
   title: string
+  url: any
   price: {
     fraction: number
     token: string
   }
 }
 
-const Card: React.FC<Props> = ({ username, title, price }) => {
+const Card: React.FC<Props> = ({ username, title, price, url }) => {
   return (
     <div className="bg-white-900 shadow-md rounded p-3 hover:shadow-xl">
       <div className="group">
-        <img
-          className="w-full md:w-72 block rounded"
-          src={'https://picsum.photos/640/400/?random' + username + title}
-          alt=""
-        />
+        <img className="w-full md:w-68 block rounded" src={url} alt="" />
       </div>
       <div className="col-span-3 row-span-1">
         <header className="flex items-center justify-between leading-tight p-2 md:p-4">
@@ -27,7 +24,7 @@ const Card: React.FC<Props> = ({ username, title, price }) => {
           </div>
           <div>
             {price.token}
-            <p className="text-grey-darker text-sm">{price.fraction}</p>
+            <p className="text-grey-darker text-sm">Ⓝ{price.fraction}</p>
           </div>
         </header>
       </div>
