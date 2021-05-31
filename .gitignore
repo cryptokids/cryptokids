@@ -44,3 +44,5 @@ Cargo.lock
 
 # Env setup
 .env
+
+.parcel-cache
