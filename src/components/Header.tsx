@@ -15,10 +15,6 @@ const navigation = [
 ]
 const profile = ['Your Profile', 'My Items', 'Settings']
 
-// function classNames(...classes: string[]) {
-//   return classes.filter(Boolean).join(' ')
-// }
-
 const UserSettings: React.FC = () => {
   return (
     <Menu as="div" className="ml-3 relative">
