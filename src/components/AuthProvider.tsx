@@ -8,13 +8,13 @@ import { nearState, contractName } from '../state/near'
 type Props = {}
 
 export const AuthProvider: React.FC<Props> = ({ children }) => {
-  const { wallet, account } = useRecoilValue(nearState)
+  const { mintbase, account } = useRecoilValue(nearState)
   const setLoggedIn = useSetRecoilState(isLoggedInState)
   const setUserState = useSetRecoilState(userState)
 
   useEffect(() => {
-    if (wallet) {
-      if (wallet.isSignedIn() && account) {
+    if (mintbase) {
+      if (mintbase.isConnected() && account) {
         setUserState({ accountId: account.accountId })
         setLoggedIn(UserState.LogIn)
       } else {
@@ -35,11 +35,11 @@ export const SignOutLink: React.FC<SignOutLinkProps> = ({
   children,
   onSignOut,
 }) => {
-  const { wallet } = useRecoilValue(nearState)
+  const { mintbase } = useRecoilValue(nearState)
   const setLoggedIn = useSetRecoilState(isLoggedInState)
   const setUserState = useSetRecoilState(userState)
   const logout = () => {
-    wallet.signOut()
+    mintbase.disconnect()
     // Update local state, as we don't have a callback on a wallet itself
     setLoggedIn(UserState.Anonymous)
     setUserState(null)
@@ -68,10 +68,14 @@ export const SignInLink: React.FC<SignInLinkProps> = ({
   children,
   onSignIn,
 }) => {
-  const { wallet } = useRecoilValue(nearState)
+  const { mintbase } = useRecoilValue(nearState)
   const login = async () => {
     // TODO: Store app name in the config
-    await wallet.requestSignIn(contractName, 'Crypto Kidz')
+    // await wallet.requestSignIn(contractName, 'Crypto Kidz')
+    await mintbase.connect({
+      requestSignIn: true,
+      contractAddress: contractName,
+    })
     onSignIn && onSignIn()
   }
   return (

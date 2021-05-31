@@ -1,58 +1,64 @@
 import * as nearAPI from 'near-api-js'
+import * as mintbase from 'mintbase'
 import { atom, selector } from 'recoil'
-import { WalletConnection } from 'near-api-js'
 import getConfig from '../config'
 
-const { Near, keyStores, Account, WalletAccount } = nearAPI
-
-export const {
-  utils: {
-    format: { formatNearAmount, parseNearAmount },
-  },
-} = nearAPI
-
-export interface IWallet extends WalletConnection {}
+export interface IWallet extends mintbase.Wallet {}
 
 export interface IAccount extends nearAPI.Account {}
 
-export interface IContract {
-  readonly contractId: string
+const API_KEY = process.env.MINTBASE_API_KEY || ''
 
-  getGreeting({ accountId }: { accountId: string }): Promise<string>
-  setGreeting({
-    accountId,
-    greeting,
-  }: {
-    accountId: string
-    greeting: string
-  }): Promise<boolean>
-}
+const {
+  networkId,
+  // nodeUrl,
+  // walletUrl,
+  contractName,
+}: {
+  networkId: string
+  // nodeUrl: string
+  // walletUrl?: string
+  contractName: string
+} = getConfig(process.env.NODE_ENV || 'development')
 
 export interface INear {
   account: IAccount | null
-  contract: IContract | null
-  near: nearAPI.Near
-  wallet: IWallet
+  contract: IGreetingContract | null
+  mintbase: IWallet
 }
 
 const initNear = selector<INear>({
   key: 'nearState/init',
   get: async () => {
-    const { near, wallet, contractAccount } = await getWallet()
+    // Load Mintbase
+    const mintabseWallet = await initMintbase()
+
+    if (!mintabseWallet.activeNearConnection || !mintabseWallet.activeWallet) {
+      console.error("Can't make a Near connection")
+      return null!
+    }
+
+    const contractAccount = new nearAPI.Account(
+      mintabseWallet.activeNearConnection.connection,
+      contractName
+    )
 
     let account: IAccount | null = null
-    if (wallet.isSignedIn()) {
-      account = wallet.account() as IAccount
+    if (
+      mintabseWallet.activeWallet.isSignedIn() &&
+      mintabseWallet.activeAccount
+    ) {
+      account = mintabseWallet.activeAccount as unknown as IAccount
       // wrapWallet.balance = formatNearAmount(
       //   (await wrapWallet.account().getAccountBalance()).available,
       //   4
       // )
     }
+
     return {
       account,
       contractAccount,
-      near,
-      wallet: wallet,
+      mintbase: mintabseWallet,
       contract: account && new Contract(getContract(account)),
     }
   },
@@ -65,7 +71,56 @@ export const nearState = atom<INear>({
   dangerouslyAllowMutability: true,
 })
 
-class Contract implements IContract {
+const contractId = contractName + '.' + networkId
+export { contractName, contractId, networkId }
+
+const initMintbase = async () => {
+  const { data: walletData, error } = await new mintbase.Wallet().init({
+    networkName: mintabseNetwork(networkId),
+    chain: mintbase.Chain.near,
+    apiKey: API_KEY,
+  })
+
+  if (error) {
+    console.error(error)
+  }
+
+  const { wallet } = walletData
+
+  return wallet
+}
+
+// Map config network into Mintbase constant
+const mintabseNetwork = (networkId: string): mintbase.Network => {
+  switch (networkId) {
+    case 'mainnet':
+      return mintbase.Network.mainnet
+    default:
+      return mintbase.Network.testnet
+  }
+}
+
+// Contracts
+
+export interface IGreetingContract {
+  readonly contractId: string
+
+  getGreeting({ accountId }: { accountId: string }): Promise<string>
+  setGreeting({
+    accountId,
+    greeting,
+  }: {
+    accountId: string
+    greeting: string
+  }): Promise<boolean>
+}
+
+let contractMethods = {
+  changeMethods: ['set_greeting'],
+  viewMethods: ['get_greeting'],
+}
+
+class Contract implements IGreetingContract {
   readonly contract: nearAPI.Contract
 
   constructor(contract: nearAPI.Contract) {
@@ -95,46 +150,6 @@ class Contract implements IContract {
     })
     return true
   }
-}
-
-// Near connection
-
-let contractMethods = {
-  changeMethods: ['set_greeting'],
-  viewMethods: ['get_greeting'],
-}
-
-export const {
-  networkId,
-  nodeUrl,
-  walletUrl,
-  contractName,
-}: {
-  networkId: string
-  nodeUrl: string
-  walletUrl?: string
-  contractName: string
-} = getConfig(process.env.NODE_ENV || 'development')
-
-export const contractId = contractName
-export const marketId = 'market.' + contractName
-
-const near = new Near({
-  networkId,
-  nodeUrl,
-  walletUrl,
-  deps: {
-    keyStore: new keyStores.BrowserLocalStorageKeyStore(),
-  },
-})
-
-const getWallet = async () => {
-  const wallet = new WalletAccount(near, null)
-
-  // walletAccount instance gets access key for contractId
-
-  const contractAccount = new Account(near.connection, contractName)
-  return { near, wallet, contractAccount }
 }
 
 function getContract(account: nearAPI.Account, methods = contractMethods) {
