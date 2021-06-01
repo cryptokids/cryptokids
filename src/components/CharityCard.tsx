@@ -9,7 +9,7 @@ type Props = {
 
 const CharityCard: React.FC<Props> = ({ title, description, logo, url }) => {
   return (
-    <div className="bg-white flex flex-col shadow-lg rounded-2xl p-2 hover:shadow-xl w-96 h-full pt-8">
+    <div className="bg-white flex flex-col shadow-lg rounded-2xl p-2 hover:shadow-xl w-80 h-full pt-8">
       <div className="group flex">
         <img className="w-32 p-4 m-auto" src={logo} alt="" />
       </div>
