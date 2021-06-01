@@ -31,7 +31,7 @@ const App: React.FC = () => {
           <React.Suspense fallback={<div>Loading...</div>}>
             {loadNear.state == 'hasValue' && loadNear.contents && (
               <AuthProvider>
-                <Router basename={process.env.PUBLIC_URL || ''}>
+                <Router basename={process.env.PUBLIC_URL || '/'}>
                   <Header />
                   <main className="flex-grow">
                     <Switch>
