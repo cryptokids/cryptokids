@@ -102,6 +102,27 @@ const mintabseNetwork = (networkId: string): mintbase.Network => {
   }
 }
 
+// Mint
+
+export const mintThing = async ({
+  mintbase: wallet,
+  title,
+  thing,
+}: {
+  mintbase: IWallet
+  title: string
+  thing?: any[]
+}) => {
+  if (wallet.minter && title.length > 0 && thing && thing.length > 0) {
+    const minter = wallet.minter
+    minter.setField(mintbase.MetadataField.Title, title)
+    await minter.uploadField(mintbase.MetadataField.Media, thing[0])
+
+    const metadata = await minter.getMetadataId()
+    console.log(metadata)
+  }
+}
+
 // Contracts
 
 function getContract(
