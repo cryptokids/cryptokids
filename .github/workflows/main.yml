@@ -42,6 +42,7 @@ jobs:
         env:
           NODE_ENV: 'development'
           CONTRACT_NAME: 'cryptokids.testnet'
+          MINTBASE_API_KEY: ${{ secrets.MINTBASE_API_KEY }}
         run: |
           yarn install
           yarn build
