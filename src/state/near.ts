@@ -9,6 +9,8 @@ export interface IWallet extends mintbase.Wallet {}
 export interface IAccount extends nearAPI.Account {}
 
 const API_KEY = process.env.MINTBASE_API_KEY || ''
+const MINTBASE_CONTRACT =
+  process.env.MINTBASE_CONTRACT || 'teststore.mintspace2.testnet'
 
 const {
   networkId,
@@ -74,7 +76,8 @@ export const nearState = atom<INear>({
 })
 
 const contractId = contractName + '.' + networkId
-export { contractName, contractId, networkId }
+const mintbaseContract = MINTBASE_CONTRACT
+export { contractName, contractId, networkId, mintbaseContract }
 
 const initMintbase = async () => {
   const { data: walletData, error } = await new mintbase.Wallet().init({
@@ -118,8 +121,8 @@ export const mintThing = async ({
     minter.setField(mintbase.MetadataField.Title, title)
     await minter.uploadField(mintbase.MetadataField.Media, thing[0])
 
-    const metadata = await minter.getMetadataId()
-    console.log(metadata)
+    const response = await wallet.mint(1, mintbaseContract)
+    console.log(response)
   }
 }
 

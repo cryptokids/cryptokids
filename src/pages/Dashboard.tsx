@@ -1,8 +1,9 @@
 import React from 'react'
 import { Switch, Route, useRouteMatch } from 'react-router'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import Greeting from './Greeting'
 import Mint from './Mint'
+import MyMints from './MyMints'
 
 const MenuItem: React.FC<{ text: string; to: string }> = ({ text, to }) => {
   return (
@@ -36,11 +37,10 @@ const Dashboard: React.FC = () => {
       <div className="p-4 w-full">
         <Switch>
           <Route exact path={`${path}/`}>
-            <p>Dash</p>
-            <Link to={`${url}/mint`}>GoTo mint</Link>
+            <MyMints />
           </Route>
           <Route path={`${path}/mint`}>
-            <Mint></Mint>
+            <Mint />
           </Route>
           <Route path={`${path}/greeting`}>
             <Greeting />
