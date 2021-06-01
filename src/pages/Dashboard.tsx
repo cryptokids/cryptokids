@@ -1,127 +1,53 @@
-import { useRecoilValue, useRecoilState } from 'recoil'
-import { userState } from '../state/authentication'
-import { greetingState } from '../state/greeting'
-import { IGreetingContract, nearState, networkId } from '../state/near'
-import GreetingForm from '../components/GreetingForm'
-import React, { useCallback, useEffect } from 'react'
-import { toast } from 'react-toastify'
+import React from 'react'
+import { Switch, Route, useRouteMatch } from 'react-router'
+import { Link, NavLink } from 'react-router-dom'
+import Greeting from './Greeting'
+import Mint from './Mint'
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
+const MenuItem: React.FC<{ text: string; to: string }> = ({ text, to }) => {
+  return (
+    <NavLink
+      to={to}
+      exact
+      className="w-full flex justify-between items-center py-3 px-6 text-gray-600 cursor-pointer hover:bg-gray-100 hover:text-gray-700 focus:outline-none"
+      activeClassName="bg-gray-100 text-gray-700"
+    >
+      <span className="flex items-center">
+        <span className="mx-4 font-medium">{text}</span>
+      </span>
+    </NavLink>
+  )
 }
 
 const Dashboard: React.FC = () => {
-  const userInfo = useRecoilValue(userState)
-  const { contract } = useRecoilValue(nearState)
-  const [greeting, setGreeting] = useRecoilState(greetingState)
-
-  const updateGreeting = useCallback(
-    async (newGreeting) => {
-      if (
-        await contract!.setGreeting({
-          accountId: userInfo!.accountId,
-          greeting: newGreeting,
-        })
-      ) {
-        setGreeting(newGreeting)
-      }
-    },
-    [setGreeting, userInfo, greeting]
-  )
-
-  useEffect(() => {
-    async function loadGreeting(contract: IGreetingContract) {
-      if (!userInfo) return
-      const greeting = await contract.getGreeting({
-        accountId: userInfo.accountId,
-      })
-      setGreeting(greeting)
-    }
-    loadGreeting(contract!)
-  }, [setGreeting, userInfo])
-
-  if (!userInfo || !contract) return null
+  let { path, url } = useRouteMatch()
 
   return (
-    <div>
-      <main>
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          {/* Replace with your content */}
-          <div className="px-4 py-6 sm:px-0">
-            <div className="bg-white dark:bg-gray-800 w-full mx-auto p-8 rounded-lg">
-              {/* <img src="/icons/rocket.svg" className="h-10 w-10 mb-8 m-auto"/> */}
-              <p className="text-gray-600 dark:text-white w-full md:w-2/3 m-auto text-center text-lg md:text-3xl">
-                <span className="font-bold text-indigo-500">“</span>
-                {greeting}
-                <span className="font-bold text-indigo-500">”</span>
-              </p>
-              <div className="flex items-center justify-center mt-8">
-                <a href="#" className="block relative">
-                  <img
-                    alt="profil"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    className="mx-auto object-cover rounded-full h-10 w-10 "
-                  />
-                </a>
-                <div className="flex ml-2 items-center justify-center">
-                  <span className="font-semibold text-indigo-500 mr-2 text-lg">
-                    {userInfo.accountId}
-                  </span>
-                  <span className="text-gray-400 text-xl font-light">/</span>
-                  <span className="text-gray-400 text-md ml-2">
-                    User of CryptoKids
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-2 border-gray-200 rounded-lg h-full mt-2">
-              <GreetingForm
-                greeting={greeting}
-                onSave={async (newGreeting) => {
-                  await updateGreeting(newGreeting)
-                  // show Notification
-                  toast(
-                    toastMessage({
-                      accountId: userInfo.accountId,
-                      contractId: contract.contractId,
-                    })
-                  )
-                  return true
-                }}
-              ></GreetingForm>
-            </div>
+    <div className="flex flex-col sm:flex-row sm:start">
+      <div className="w-64 h-full bg-white">
+        <nav className="mt-10">
+          <div>
+            <MenuItem to={`${url}`} text="My things" />
+            <MenuItem to={`${url}/mint`} text="Mint" />
+            <MenuItem to={`${url}/greeting`} text="Greeting Contract" />
           </div>
-          {/* /End replace */}
-        </div>
-      </main>
-      <main></main>
+        </nav>
+      </div>
+      <div className="p-4 w-full">
+        <Switch>
+          <Route exact path={`${path}/`}>
+            <p>Dash</p>
+            <Link to={`${url}/mint`}>GoTo mint</Link>
+          </Route>
+          <Route path={`${path}/mint`}>
+            <Mint></Mint>
+          </Route>
+          <Route path={`${path}/greeting`}>
+            <Greeting />
+          </Route>
+        </Switch>
+      </div>
     </div>
-  )
-}
-
-const toastMessage = ({
-  accountId,
-  contractId,
-}: {
-  accountId: string
-  contractId: string
-}) => {
-  const urlPrefix = `https://explorer.${networkId}.near.org/accounts`
-  return (
-    <React.Fragment>
-      🦄{' '}
-      <a target="_blank" rel="noreferrer" href={`${urlPrefix}/${accountId}`}>
-        {accountId}
-      </a>
-      {
-        ' ' /* React trims whitespace around tags; insert literal space character when needed */
-      }
-      called method: 'set_greeting' in contract:{' '}
-      <a target="_blank" rel="noreferrer" href={`${urlPrefix}/${contractId}`}>
-        {contractId}
-      </a>
-    </React.Fragment>
   )
 }
 

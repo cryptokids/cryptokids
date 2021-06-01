@@ -33,25 +33,3 @@ const Card: React.FC<Props> = ({ username, title, price, url }) => {
 }
 
 export default Card
-
-const BuyButton: React.FC = () => {
-  return (
-    <div className="p-5">
-      <div className="relative ">
-        <div className="absolute bg-black top-0.5 -right-0.5 -bottom-0.5 left-0.5"></div>
-        <div
-          className="relative text-sm border cursor-pointer"
-          style={{
-            height: 38,
-            backgroundColor: 'rgb(190, 242, 100)',
-            borderColor: 'rgb(0, 0, 0)',
-          }}
-        >
-          <span className="absolute inset-0 flex items-center justify-center text-black tracking-wide uppercase RobotoMono-Bold_font__226og">
-            <span>Buy now</span>
-          </span>
-        </div>
-      </div>{' '}
-    </div>
-  )
-}
