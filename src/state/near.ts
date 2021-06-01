@@ -1,6 +1,7 @@
 import * as nearAPI from 'near-api-js'
 import * as mintbase from 'mintbase'
 import { atom, selector } from 'recoil'
+import { contractMethods, Contract, IGreetingContract } from './greeting'
 import getConfig from '../config'
 
 export interface IWallet extends mintbase.Wallet {}
@@ -38,8 +39,7 @@ const initNear = selector<INear>({
       return null!
     }
 
-    const contractAccount = new nearAPI.Account(
-      mintabseWallet.activeNearConnection.connection,
+    const contractAccount = await mintabseWallet.activeNearConnection.account(
       contractName
     )
 
@@ -59,7 +59,9 @@ const initNear = selector<INear>({
       account,
       contractAccount,
       mintbase: mintabseWallet,
-      contract: account && new Contract(getContract(account)),
+      contract:
+        account &&
+        new Contract(getContract(account, contractName, contractMethods)),
     }
   },
   dangerouslyAllowMutability: true,
@@ -102,56 +104,12 @@ const mintabseNetwork = (networkId: string): mintbase.Network => {
 
 // Contracts
 
-export interface IGreetingContract {
-  readonly contractId: string
-
-  getGreeting({ accountId }: { accountId: string }): Promise<string>
-  setGreeting({
-    accountId,
-    greeting,
-  }: {
-    accountId: string
-    greeting: string
-  }): Promise<boolean>
-}
-
-let contractMethods = {
-  changeMethods: ['set_greeting'],
-  viewMethods: ['get_greeting'],
-}
-
-class Contract implements IGreetingContract {
-  readonly contract: nearAPI.Contract
-
-  constructor(contract: nearAPI.Contract) {
-    this.contract = contract
-  }
-
-  get contractId(): string {
-    return this.contract.contractId
-  }
-
-  async getGreeting({ accountId }: { accountId: string }): Promise<string> {
-    // @ts-ignore: Near Contract generate methods at the runtime
-    return await this.contract.get_greeting({ account_id: accountId })
-  }
-
-  async setGreeting({
-    accountId,
-    greeting,
-  }: {
-    accountId: string
-    greeting: string
-  }): Promise<boolean> {
-    // @ts-ignore: Near Contract generate methods at the runtime
-    await this.contract.set_greeting({
-      account_id: accountId,
-      message: greeting,
-    })
-    return true
-  }
-}
-
-function getContract(account: nearAPI.Account, methods = contractMethods) {
-  return new nearAPI.Contract(account, contractName, { ...methods })
+function getContract(
+  account: nearAPI.Account,
+  contractName: string,
+  methods: any
+) {
+  return new nearAPI.Contract(account, contractName, {
+    ...methods,
+  })
 }
