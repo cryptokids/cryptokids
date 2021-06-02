@@ -17,6 +17,7 @@ import Dashboard from './pages/Dashboard'
 import Marketplace from './pages/Marketplace'
 import Charities from './pages/Charities'
 import Activity from './pages/Activity'
+import CallbackWatcher from './components/CallbackWatcher'
 
 const App: React.FC = () => {
   // Load near library
@@ -32,6 +33,7 @@ const App: React.FC = () => {
             {loadNear.state == 'hasValue' && loadNear.contents && (
               <AuthProvider>
                 <Router basename={process.env.PUBLIC_URL || '/'}>
+                  <CallbackWatcher />
                   <Header />
                   <main className="flex-grow">
                     <Switch>
