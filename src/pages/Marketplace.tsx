@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Card from '../components/Card'
 
 import theRooksImage from 'url:../assets/drawings/TheRooksHaveArrived.png'
@@ -6,6 +6,8 @@ import dvor from 'url:../assets/drawings/dvor.jpeg'
 import elephant from 'url:../assets/drawings/elephant.png'
 import tractor from 'url:../assets/drawings/tractor.jpeg'
 import horse from 'url:../assets/drawings/horse.jpeg'
+import { useRecoilValue } from 'recoil'
+import { IWallet, mintbaseContract, nearState } from '../state/near'
 
 const nfts = [
   // {
@@ -56,8 +58,19 @@ const nfts = [
 ]
 
 const Marketplace: React.FC = () => {
+  const { mintbase } = useRecoilValue(nearState)
+
+  useEffect(() => {
+    async function loadMarketplace(wallet: IWallet) {
+      const things = await wallet.api!.fetchStoreById(mintbaseContract)
+      console.log(things)
+    }
+    if (mintbase) {
+      loadMarketplace(mintbase)
+    }
+  })
+
   return (
-    // grid place-items-center min-h-screen bg-gradient-to-t from-blue-200 to-indigo-900 p-5
     <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 p-5">
       {nfts.map((nft) => {
         return (

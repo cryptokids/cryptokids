@@ -1,4 +1,3 @@
-import { MetadataField } from 'mintbase'
 import React, { useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { mintThing, nearState } from '../state/near'
@@ -49,8 +48,13 @@ const MintButton: React.FC<{ onClick?: () => void }> = ({ onClick }) => {
 
 const Mint: React.FC = () => {
   const { mintbase } = useRecoilValue(nearState)
-  const [formState, setFormState] = useState<{ thing?: any[]; title: string }>({
+  const [formState, setFormState] = useState<{
+    thing?: any[]
+    title: string
+    description: string
+  }>({
     title: '',
+    description: '',
   })
 
   const fileRef: React.RefObject<HTMLInputElement> = React.createRef()
@@ -73,11 +77,6 @@ const Mint: React.FC = () => {
     setFormState({ ...formState, [name]: value })
   }
 
-  const mint = async () => {
-    console.log(formState)
-    await mintThing({ ...formState, mintbase })
-  }
-
   return (
     <div className="w-full">
       <form className="w-full mx-auto rounded-lg bg-white shadow-lg p-5 text-gray-700">
@@ -86,6 +85,17 @@ const Mint: React.FC = () => {
           <div>
             <input
               name="title"
+              className="w-full px-3 py-2 mb-1 border-2 border-gray-200 rounded-md focus:outline-none focus:border-indigo-500 transition-colors"
+              type="text"
+              onChange={handleInputChange}
+            />
+          </div>
+        </div>
+        <div className="mb-3">
+          <label className="font-bold text-sm mb-2 ml-1">Description</label>
+          <div>
+            <input
+              name="description"
               className="w-full px-3 py-2 mb-1 border-2 border-gray-200 rounded-md focus:outline-none focus:border-indigo-500 transition-colors"
               type="text"
               onChange={handleInputChange}
@@ -111,23 +121,24 @@ const Mint: React.FC = () => {
               className="hidden"
               onChange={handleInputChange}
             />
-            <button
+            <span
               id="button"
-              className="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:shadow-outline focus:outline-none"
+              className="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:shadow-outline focus:outline-none cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation()
                 fileRef.current?.click()
               }}
             >
               Upload a file
-            </button>
+            </span>
           </div>
           <h1 className="pt-8 pb-3 font-semibold sm:text-lg text-gray-900">
             To Upload
           </h1>
 
           <ul id="gallery" className="flex flex-1 flex-wrap -m-1">
-            {formState['thing']?.length > 0 &&
+            {formState['thing'] &&
+              formState['thing'].length > 0 &&
               formState['thing'].map((f, idx) => {
                 return <FilePreview key={`file-${idx}`} file={f} />
               })}
@@ -149,7 +160,11 @@ const Mint: React.FC = () => {
           </ul>
         </div>
         <div className="mb-3">
-          <MintButton onClick={mint} />
+          <MintButton
+            onClick={async () => {
+              await mintThing({ ...formState, mintbase })
+            }}
+          />
         </div>
       </form>
     </div>
