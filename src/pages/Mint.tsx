@@ -48,8 +48,13 @@ const MintButton: React.FC<{ onClick?: () => void }> = ({ onClick }) => {
 
 const Mint: React.FC = () => {
   const { mintbase } = useRecoilValue(nearState)
-  const [formState, setFormState] = useState<{ thing?: any[]; title: string }>({
+  const [formState, setFormState] = useState<{
+    thing?: any[]
+    title: string
+    description: string
+  }>({
     title: '',
+    description: '',
   })
 
   const fileRef: React.RefObject<HTMLInputElement> = React.createRef()
@@ -80,6 +85,17 @@ const Mint: React.FC = () => {
           <div>
             <input
               name="title"
+              className="w-full px-3 py-2 mb-1 border-2 border-gray-200 rounded-md focus:outline-none focus:border-indigo-500 transition-colors"
+              type="text"
+              onChange={handleInputChange}
+            />
+          </div>
+        </div>
+        <div className="mb-3">
+          <label className="font-bold text-sm mb-2 ml-1">Description</label>
+          <div>
+            <input
+              name="description"
               className="w-full px-3 py-2 mb-1 border-2 border-gray-200 rounded-md focus:outline-none focus:border-indigo-500 transition-colors"
               type="text"
               onChange={handleInputChange}
