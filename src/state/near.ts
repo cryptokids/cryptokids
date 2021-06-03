@@ -3,7 +3,7 @@ import * as mintbase from 'mintbase'
 import { atom, selector } from 'recoil'
 import { contractMethods, Contract, IGreetingContract } from './greeting'
 import getConfig from '../config'
-import getMintbaseConfig from '../config'
+import { getMintbaseConfig } from '../config'
 
 export interface IWallet extends mintbase.Wallet {}
 export interface IAccount extends nearAPI.Account {}
@@ -20,9 +20,9 @@ const {
   contractName: string
 } = getConfig(process.env.NODE_ENV || 'development')
 
-const { 
+const {
   mintbaseApiKey,
-  mintbaseContractName
+  mintbaseContractName,
 }: {
   mintbaseApiKey: string
   mintbaseContractName: string

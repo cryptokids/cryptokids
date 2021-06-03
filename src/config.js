@@ -91,4 +91,4 @@ function getMintbaseConfig(env) {
 
 module.exports = getConfig
 
-exports.getMintbaseConfig = getMintbaseConfig
+module.exports.getMintbaseConfig = getMintbaseConfig
