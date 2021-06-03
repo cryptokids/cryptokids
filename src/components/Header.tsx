@@ -11,10 +11,10 @@ import logo from 'url:../assets/logo.png'
 import avatar from 'url:../assets/kid-avatar.png'
 
 const navigation = [
-  { name: 'Dashboard', link: '/dashboard' },
-  { name: 'Marketplace', link: '/marketplace' },
-  { name: 'My Items', link: '/activity' },
-  { name: 'Charities', link: '/charities' },
+  { name: 'Marketplace', link: '/marketplace', auth: false },
+  { name: 'My Items', link: '/activity', auth: true },
+  { name: 'Mint', link: '/dashboard', auth: true },
+  { name: 'Charities', link: '/charities', auth: false },
 ]
 const profile = ['Your Profile', 'My Items', 'Settings']
 
@@ -149,7 +149,7 @@ const MobileAnonymousSettings: React.FC = () => {
 }
 
 const Header: React.FC = () => {
-  const loggedInState = useRecoilValue(isLoggedInState)
+  const isLoggedIn = useRecoilValue(isLoggedInState)
 
   return (
     <div>
@@ -172,16 +172,21 @@ const Header: React.FC = () => {
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-10 flex items-baseline space-x-4">
-                      {navigation.map((item) => (
-                        <NavLink
-                          key={item.link}
-                          to={item.link}
-                          className="text-gray-300  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-md font-medium"
-                          activeClassName="text-gray-800 dark:text-white  hover:text-gray-800 dark:hover:text-white"
-                        >
-                          {item.name}
-                        </NavLink>
-                      ))}
+                      {navigation.map((item) => {
+                        if (item.auth && isLoggedIn != UserState.LogIn) {
+                          return null
+                        }
+                        return (
+                          <NavLink
+                            key={item.link}
+                            to={item.link}
+                            className="text-gray-300  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-md font-medium"
+                            activeClassName="text-gray-800 dark:text-white  hover:text-gray-800 dark:hover:text-white"
+                          >
+                            {item.name}
+                          </NavLink>
+                        )
+                      })}
                     </div>
                   </div>
                 </div>
@@ -192,7 +197,7 @@ const Header: React.FC = () => {
                       <BellIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
                     {/* Profile dropdown */}
-                    {loggedInState == UserState.LogIn ? (
+                    {isLoggedIn == UserState.LogIn ? (
                       <UserSettings />
                     ) : (
                       <AnonymousSettings />
@@ -227,7 +232,7 @@ const Header: React.FC = () => {
                 ))}
               </div>
               {/* Profile description */}
-              {loggedInState == UserState.LogIn ? (
+              {isLoggedIn == UserState.LogIn ? (
                 <MobileUserSettings />
               ) : (
                 <MobileAnonymousSettings />

@@ -18,6 +18,7 @@ import Marketplace from './pages/Marketplace'
 import Charities from './pages/Charities'
 import Activity from './pages/Activity'
 import CallbackWatcher from './components/CallbackWatcher'
+import Greeting from './pages/Greeting'
 
 const App: React.FC = () => {
   // Load near library
@@ -37,6 +38,9 @@ const App: React.FC = () => {
                   <Header />
                   <main className="flex-grow">
                     <Switch>
+                      <Route path="/greeting">
+                        <Greeting />
+                      </Route>
                       <Route path="/marketplace">
                         <Marketplace />
                       </Route>

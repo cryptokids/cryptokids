@@ -1,7 +1,8 @@
 import React from 'react'
+import MyMints from './MyMints'
 
 const Activity: React.FC = () => {
-  return <p>Activity Palceholder</p>
+  return <MyMints />
 }
 
 export default Activity

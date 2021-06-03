@@ -1,88 +1,66 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Card from '../components/Card'
 
-import theRooksImage from 'url:../assets/drawings/TheRooksHaveArrived.png'
-import dvor from 'url:../assets/drawings/dvor.jpeg'
-import elephant from 'url:../assets/drawings/elephant.png'
-import tractor from 'url:../assets/drawings/tractor.jpeg'
-import horse from 'url:../assets/drawings/horse.jpeg'
 import { useRecoilValue } from 'recoil'
 import { IWallet, mintbaseContract, nearState } from '../state/near'
 
-const nfts = [
-  // {
-  //   username: 'deus.near',
-  //   title: 'The Rooks Have Arrived',
-  //   url: theRooksImage,
-  //   price: {
-  //     token: 'NEAR',
-  //     fraction: 10,
-  //   },
-  // },
-  {
-    username: 'alex.near',
-    title: 'Dvor',
-    url: dvor,
-    price: {
-      token: 'NEAR',
-      fraction: 15,
-    },
-  },
-  {
-    username: 'dana.near',
-    title: 'Elephant',
-    url: elephant,
-    price: {
-      token: 'NEAR',
-      fraction: 6,
-    },
-  },
-  {
-    username: 'bender.near',
-    title: 'Tractor',
-    url: tractor,
-    price: {
-      token: 'NEAR',
-      fraction: 7,
-    },
-  },
-  {
-    username: 'rick.near',
-    title: 'Horse',
-    url: horse,
-    price: {
-      token: 'NEAR',
-      fraction: 2,
-    },
-  },
-]
-
 const Marketplace: React.FC = () => {
   const { mintbase } = useRecoilValue(nearState)
+  const [things, setThings] = useState([] as any[])
 
   useEffect(() => {
-    async function loadMarketplace(wallet: IWallet) {
-      const things = await wallet.api!.fetchStoreById(mintbaseContract)
-      console.log(things)
+    async function loadMarketplace(wallet: IWallet, storeId: string) {
+      const {
+        data: { store },
+      } = await wallet.api!.fetchStoreById(storeId)
+      const myStore = store.find((el: { id: string }) => el.id == storeId)
+      Promise.all(
+        myStore.things.map(async (t: { id: string }) => {
+          const { data } = await wallet.api!.fetchThingMetadata(t.id)
+          return data ? { ...t, thing: data } : null
+        })
+      ).then((result) => {
+        console.log(result)
+        setThings(result as any[])
+      })
     }
     if (mintbase) {
-      loadMarketplace(mintbase)
+      loadMarketplace(mintbase, mintbaseContract)
     }
-  })
+  }, [])
+  console.log(things)
+
+  // TODO: Find a way to get price
+  const getPrice = (x: any): number => {
+    return 10
+  }
+
+  const getAuthor = (x: any): string => {
+    return x.tokens[0].minter
+  }
 
   return (
-    <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 p-5">
-      {nfts.map((nft) => {
-        return (
-          <Card
-            key={nft.username + nft.title}
-            username={nft.username}
-            title={nft.title}
-            price={nft.price}
-            url={nft.url}
-          />
-        )
-      })}
+    <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5">
+      {things.map(
+        (item: {
+          id: string
+          thing: { title: string; media: { data: { uri: string } } | string }
+        }) => {
+          return (
+            <Card
+              key={item.id}
+              username={getAuthor(item)}
+              title={item.thing.title}
+              price={{ fraction: getPrice(item), token: 'NEAR' }}
+              url={
+                typeof item.thing.media === 'string'
+                  ? item.thing.media
+                  : item.thing.media.data.uri
+              }
+            ></Card>
+          )
+        }
+      )}
     </div>
   )
 }

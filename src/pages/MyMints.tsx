@@ -6,7 +6,7 @@ import Card from '../components/Card'
 const ThingCard: React.FC<{ thing: any }> = ({ thing }) => {
   return (
     <Card
-      username={'me'}
+      username={thing.accountId}
       title={thing.title}
       price={{ fraction: 1, token: 'NEAR' }}
       url={typeof thing.media === 'string' ? thing.media : thing.media.data.uri}
@@ -28,8 +28,11 @@ const MyMints: React.FC = () => {
       const { token } = data
       Promise.all(
         token.map(async (t: { thing: { id: string }; id: string }) => {
+          console.log(t)
           const { data } = await wallet.api!.fetchThingMetadata(t.thing.id)
-          return data ? data : null
+          return data
+            ? { ...data, id: t.id, accountId: account.accountId }
+            : null
         })
       ).then((result) => {
         console.log(result)
@@ -44,7 +47,7 @@ const MyMints: React.FC = () => {
   }, [setThings])
 
   return (
-    <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 p-5">
+    <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5">
       {things.map((thing, idx) => {
         return <ThingCard key={`thing_${idx}`} thing={thing} />
       })}
