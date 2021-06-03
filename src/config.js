@@ -1,4 +1,7 @@
 const CONTRACT_NAME = process.env.CONTRACT_NAME || 'cryptokids'
+const MINTBASE_API_KEY = process.env.MINTBASE_API_KEY || ''
+const MINTBASE_CONTRACT =
+  process.env.MINTBASE_CONTRACT || 'cryptokids.mintspace2.testnet'
 
 let default_config = {
   contractName: CONTRACT_NAME,
@@ -65,4 +68,25 @@ function getConfig(env) {
   }
 }
 
-module.exports = getConfig
+function getMintbaseConfig(env) {
+  switch (env) {
+    case 'production':
+    case 'mainnet':
+      return {
+        mintbaseApiKey: MINTBASE_API_KEY,
+        mintbaseContractName: MINTBASE_CONTRACT,
+      }
+    case 'development':
+    case 'testnet':
+      return {
+        mintbaseApiKey: MINTBASE_API_KEY,
+        mintbaseContractName: MINTBASE_CONTRACT,
+      }
+    default:
+      throw Error(
+        `Unconfigured environment '${env}'. Can be configured in src/config.js.`
+      )
+  }
+}
+
+module.exports = { getConfig, getMintbaseConfig }

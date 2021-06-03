@@ -2,15 +2,10 @@ import * as nearAPI from 'near-api-js'
 import * as mintbase from 'mintbase'
 import { atom, selector } from 'recoil'
 import { contractMethods, Contract, IGreetingContract } from './greeting'
-import getConfig from '../config'
+import { getConfig, getMintbaseConfig } from '../config'
 
 export interface IWallet extends mintbase.Wallet {}
-
 export interface IAccount extends nearAPI.Account {}
-
-const API_KEY = process.env.MINTBASE_API_KEY || ''
-const MINTBASE_CONTRACT =
-  process.env.MINTBASE_CONTRACT || 'teststore.mintspace2.testnet'
 
 const {
   networkId,
@@ -23,6 +18,14 @@ const {
   // walletUrl?: string
   contractName: string
 } = getConfig(process.env.NODE_ENV || 'development')
+
+const { 
+  mintbaseApiKey,
+  mintbaseContractName
+}: {
+  mintbaseApiKey: string
+  mintbaseContractName: string
+} = getMintbaseConfig(process.env.NODE_ENV || 'development')
 
 export interface INear {
   account: IAccount | null
@@ -76,14 +79,14 @@ export const nearState = atom<INear>({
 })
 
 const contractId = contractName + '.' + networkId
-const mintbaseContract = MINTBASE_CONTRACT
+const mintbaseContract = mintbaseContractName
 export { contractName, contractId, networkId, mintbaseContract }
 
 const initMintbase = async () => {
   const { data: walletData, error } = await new mintbase.Wallet().init({
     networkName: mintabseNetwork(networkId),
     chain: mintbase.Chain.near,
-    apiKey: API_KEY,
+    apiKey: mintbaseApiKey,
   })
 
   if (error) {
