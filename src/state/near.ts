@@ -2,7 +2,8 @@ import * as nearAPI from 'near-api-js'
 import * as mintbase from 'mintbase'
 import { atom, selector } from 'recoil'
 import { contractMethods, Contract, IGreetingContract } from './greeting'
-import { getConfig, getMintbaseConfig } from '../config'
+import getConfig from '../config'
+import getMintbaseConfig from '../config'
 
 export interface IWallet extends mintbase.Wallet {}
 export interface IAccount extends nearAPI.Account {}

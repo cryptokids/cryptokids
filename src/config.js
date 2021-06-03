@@ -89,4 +89,6 @@ function getMintbaseConfig(env) {
   }
 }
 
-module.exports = { getConfig, getMintbaseConfig }
+module.exports = getConfig
+
+exports.getMintbaseConfig = getMintbaseConfig
