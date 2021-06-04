@@ -4,9 +4,11 @@ import { IAccount, IWallet, nearState } from '../state/near'
 import Card from '../components/Card'
 
 const ThingCard: React.FC<{ thing: any }> = ({ thing }) => {
+  const extras = thing.extra != null ? JSON.parse(thing.extra) : {}
   return (
     <Card
       username={thing.accountId}
+      charityId={extras.charity}
       title={thing.title}
       price={{ fraction: 1, token: 'NEAR' }}
       url={typeof thing.media === 'string' ? thing.media : thing.media.data.uri}

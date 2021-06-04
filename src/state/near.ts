@@ -115,17 +115,24 @@ export const mintThing = async ({
   mintbase: wallet,
   title,
   description,
+  charity,
   thing,
 }: {
   mintbase: IWallet
   title: string
   description: string
+  charity: string
   thing?: any[]
 }) => {
   if (wallet.minter && title.length > 0 && thing && thing.length > 0) {
     const minter = wallet.minter
     minter.setField(mintbase.MetadataField.Title, title)
     minter.setField(mintbase.MetadataField.Description, description)
+
+    minter.setField(
+      mintbase.MetadataField.Extra,
+      JSON.stringify({ charity, minPrice: 10 })
+    )
 
     const { data, error } = await minter.upload(thing[0])
 
@@ -137,6 +144,7 @@ export const mintThing = async ({
     const { uri, hash } = data
     minter.setField(mintbase.MetadataField.Media, uri)
     minter.setField(mintbase.MetadataField.Media_hash, hash)
+    // Use `uploadField` after bumping a mintbase version, as they fixed it
     // await minter.uploadField(mintbase.MetadataField.Media, url)
 
     const response = await wallet.mint(1, mintbaseContract)
