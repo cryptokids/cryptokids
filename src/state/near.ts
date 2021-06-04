@@ -129,11 +129,10 @@ export const mintThing = async ({
     minter.setField(mintbase.MetadataField.Title, title)
     minter.setField(mintbase.MetadataField.Description, description)
 
-    minter.setField(
-      mintbase.MetadataField.Extra,
-      JSON.stringify({ charity, minPrice: 10 })
-    )
-
+    minter.setField(mintbase.MetadataField.Extra, [
+      { trait_type: 'charityId', value: charity },
+      { trait_type: 'minPrice', value: 10 },
+    ])
     const { data, error } = await minter.upload(thing[0])
 
     if (error) {

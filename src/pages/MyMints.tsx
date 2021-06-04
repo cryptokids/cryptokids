@@ -2,13 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { IAccount, IWallet, nearState } from '../state/near'
 import Card from '../components/Card'
+import { Attribute } from 'mintbase'
 
 const ThingCard: React.FC<{ thing: any }> = ({ thing }) => {
-  const extras = thing.extra != null ? JSON.parse(thing.extra) : {}
+  const extras =
+    thing.extra != null && Array.isArray(thing.extra) ? thing.extra : []
+  const charityId = extras.find((c: Attribute) => c.trait_type === 'charityId')
+
   return (
     <Card
       username={thing.accountId}
-      charityId={extras.charity}
+      charityId={charityId ? charityId.value : '-'}
       title={thing.title}
       price={{ fraction: 1, token: 'NEAR' }}
       url={typeof thing.media === 'string' ? thing.media : thing.media.data.uri}

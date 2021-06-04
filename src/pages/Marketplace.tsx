@@ -3,6 +3,7 @@ import Card from '../components/Card'
 
 import { useRecoilValue } from 'recoil'
 import { IWallet, mintbaseContract, nearState } from '../state/near'
+import { Attribute } from 'mintbase'
 
 const Marketplace: React.FC = () => {
   const { mintbase } = useRecoilValue(nearState)
@@ -46,18 +47,25 @@ const Marketplace: React.FC = () => {
           id: string
           thing: {
             title: string
-            extra: string | null
+            extra: Attribute[]
             media: { data: { uri: string } } | string
           }
         }) => {
           const extras =
-            item.thing.extra != null ? JSON.parse(item.thing.extra) : {}
+            item.thing.extra != null && Array.isArray(item.thing.extra)
+              ? item.thing.extra
+              : []
+          const charityId = extras.find(
+            (c: Attribute) => c.trait_type === 'charityId'
+          )
 
           return (
             <Card
               key={item.id}
               username={getAuthor(item)}
-              charityId={extras.charity}
+              charityId={
+                charityId && charityId.value != null ? charityId.value! : '-'
+              }
               title={item.thing.title}
               price={{ fraction: getPrice(item), token: 'NEAR' }}
               url={

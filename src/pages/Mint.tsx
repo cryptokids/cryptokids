@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
-import { charitiesState, ICharitiesData } from '../state/charities'
+import { charitiesState } from '../state/charities'
 import { mintThing, nearState } from '../state/near'
 
 import loader from 'url:../assets/loader.gif'
@@ -53,7 +52,7 @@ const MintButton: React.FC<{ onClick?: () => void }> = ({ onClick }) => {
 const Mint: React.FC = () => {
   const { mintbase } = useRecoilValue(nearState)
   const charities = useRecoilValueLoadable(charitiesState)
-  const [isLoading, setLoading] = useState(true)
+  const [isLoading, setLoading] = useState(false)
   const [formState, setFormState] = useState<{
     thing?: any[]
     title: string | null
