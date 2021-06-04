@@ -44,12 +44,20 @@ const Marketplace: React.FC = () => {
       {things.map(
         (item: {
           id: string
-          thing: { title: string; media: { data: { uri: string } } | string }
+          thing: {
+            title: string
+            extra: string | null
+            media: { data: { uri: string } } | string
+          }
         }) => {
+          const extras =
+            item.thing.extra != null ? JSON.parse(item.thing.extra) : {}
+
           return (
             <Card
               key={item.id}
               username={getAuthor(item)}
+              charityId={extras.charity}
               title={item.thing.title}
               price={{ fraction: getPrice(item), token: 'NEAR' }}
               url={

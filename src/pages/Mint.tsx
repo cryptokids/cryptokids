@@ -1,6 +1,10 @@
-import React, { useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { charitiesState, ICharitiesData } from '../state/charities'
 import { mintThing, nearState } from '../state/near'
+
+import loader from 'url:../assets/loader.gif'
 
 const FilePreview: React.FC<{ file: any }> = ({ file }) => {
   const url = URL.createObjectURL(file)
@@ -48,13 +52,17 @@ const MintButton: React.FC<{ onClick?: () => void }> = ({ onClick }) => {
 
 const Mint: React.FC = () => {
   const { mintbase } = useRecoilValue(nearState)
+  const charities = useRecoilValueLoadable(charitiesState)
+  const [isLoading, setLoading] = useState(true)
   const [formState, setFormState] = useState<{
     thing?: any[]
-    title: string
-    description: string
+    title: string | null
+    description: string | null
+    charity: string | null
   }>({
-    title: '',
-    description: '',
+    title: null,
+    description: null,
+    charity: null,
   })
 
   const fileRef: React.RefObject<HTMLInputElement> = React.createRef()
@@ -76,6 +84,12 @@ const Mint: React.FC = () => {
     // thing
     setFormState({ ...formState, [name]: value })
   }
+
+  useEffect(() => {
+    if (charities.contents) {
+      setFormState({ ...formState, ['charity']: charities.contents[0].id })
+    }
+  }, [charities])
 
   return (
     <div className="w-full">
@@ -102,6 +116,28 @@ const Mint: React.FC = () => {
             />
           </div>
         </div>
+        {charities.state == 'hasValue' && charities.contents && (
+          <>
+            <div className="mb-3">
+              <label className="font-bold text-sm mb-2 ml-1">Donate to</label>
+              <div>
+                <select
+                  name="charity"
+                  className="w-full px-3 py-2 mb-1 border-2 border-gray-200 rounded-md focus:outline-none focus:border-indigo-500 transition-colors"
+                  onChange={handleInputChange}
+                >
+                  {charities.contents.map((c: ICharitiesData, i: number) => {
+                    return (
+                      <option key={i} value={c.id}>
+                        {c.title}
+                      </option>
+                    )
+                  })}
+                </select>
+              </div>
+            </div>
+          </>
+        )}
         <div className="mb-3">
           <div
             className="border-dashed border-2 border-gray-400 py-12 flex flex-col justify-center items-center"
@@ -162,10 +198,36 @@ const Mint: React.FC = () => {
         <div className="mb-3">
           <MintButton
             onClick={async () => {
-              await mintThing({ ...formState, mintbase })
+              console.log(formState)
+              // TODO: Do validation of the fields before call mint and present error
+              if (
+                formState.title != null &&
+                formState.title.length > 0 &&
+                formState.description != null &&
+                formState.description.length > 10 &&
+                formState.charity != null &&
+                formState.thing != null
+              ) {
+                setLoading(true)
+                //@ts-ignore We did a check before
+                await mintThing({ ...formState, mintbase })
+                setLoading(false)
+              } else {
+                toast.error('Please fill all fields')
+              }
             }}
           />
         </div>
+        {isLoading && (
+          <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-white flex flex-col items-center justify-center">
+            <div>
+              <img className="h-80 w-80" src={loader} alt="Loading..." />
+            </div>
+            <p className="w-1/3 text-center text-black">
+              This may take a few seconds, please don't close this page.
+            </p>
+          </div>
+        )}
       </form>
     </div>
   )
