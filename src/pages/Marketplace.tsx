@@ -5,6 +5,8 @@ import { useRecoilValue } from 'recoil'
 import { IWallet, mintbaseContract, nearState } from '../state/near'
 import { Attribute } from 'mintbase'
 
+import loader from 'url:../assets/loader.gif'
+
 const Marketplace: React.FC = () => {
   const { mintbase } = useRecoilValue(nearState)
   const [things, setThings] = useState([] as any[])
@@ -38,6 +40,14 @@ const Marketplace: React.FC = () => {
 
   const getAuthor = (x: any): string => {
     return x.tokens[0].minter
+  }
+
+  if (things.length == 0) {
+    return (
+      <div className="flex items-center justify-center w-full">
+        <img className="max-h-80 p-20" src={loader} />
+      </div>
+    )
   }
 
   return (
