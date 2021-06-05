@@ -1,8 +1,10 @@
 import React, { ReactElement } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 import { charitiesState, ICharitiesData } from '../state/charities'
+import { Link } from 'react-router-dom'
 
 type Props = {
+  id: string
   username: string
   title: string
   url: any
@@ -22,6 +24,7 @@ const charityById = (
 }
 
 const Card: React.FC<Props> = ({
+  id,
   username,
   title,
   price,
@@ -34,7 +37,13 @@ const Card: React.FC<Props> = ({
   return (
     <div className="bg-white-900 shadow-md rounded p-3 hover:shadow-xl">
       <div className="group">
-        <img className="w-full md:w-68 block rounded" src={url} alt="" />
+        <Link
+          to={{
+            pathname: `/item/${id}`,
+          }}
+        >
+          <img className="w-full md:w-68 block rounded" src={url} alt={title} />
+        </Link>
       </div>
       <div className="col-span-3 row-span-1">
         <header className="flex items-center justify-between leading-tight p-2 md:p-4">

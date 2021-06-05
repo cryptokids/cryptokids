@@ -19,6 +19,7 @@ import Charities from './pages/Charities'
 import Activity from './pages/Activity'
 import CallbackWatcher from './components/CallbackWatcher'
 import Greeting from './pages/Greeting'
+import Item from './pages/Item'
 
 const App: React.FC = () => {
   // Load near library
@@ -57,6 +58,9 @@ const App: React.FC = () => {
                       </Route>
                       <Route path="/welcome">
                         <Welcome />
+                      </Route>
+                      <Route path="/item/:itemId">
+                        <Item />
                       </Route>
                       <Route exact path="/">
                         {loggedInState != UserState.Anonymous ? (

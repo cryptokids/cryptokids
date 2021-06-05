@@ -18,7 +18,7 @@ const LoadingCard: React.FC<{
   if (metadata.state === 'hasValue' && metadata.contents) {
     return (
       <Card
-        key={id}
+        id={id}
         username={metadata.contents.ownerId}
         title={metadata.contents.thing.title}
         price={{ fraction: 1, token: 'NEAR' }}

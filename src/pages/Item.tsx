@@ -3,11 +3,12 @@ import Card from '../components/Card'
 import { useRecoilValue } from 'recoil'
 import { Attribute, MintMetadata } from 'mintbase'
 import { IWallet, mintbaseContract, nearState } from '../state/near'
+import { useParams } from 'react-router-dom'
 
 const Item: React.FC = () => {
   const { mintbase } = useRecoilValue(nearState)
   const [item, setItem] = useState(null as MintMetadata | null)
-  const itemId = '1'
+  let { itemId } = useParams()
 
   useEffect(() => {
     async function loadItem(wallet: IWallet, storeId: string, itemId: string) {
@@ -28,7 +29,7 @@ const Item: React.FC = () => {
   console.log(item)
 
   const getAuthor = (x: any): string => {
-    return x.tokens[0].minter
+    return 'deus' //x?.tokens[0]?.minter
   }
 
   const extras =
@@ -42,18 +43,20 @@ const Item: React.FC = () => {
   return (
     <div>
       {item != null && (
-        <Card
-          key={item.id}
-          username={getAuthor(item)}
-          charityId={
-            charityId && charityId.value != null ? charityId.value! : '-'
-          }
-          title={item.title}
-          price={{ fraction: getPrice(item), token: 'NEAR' }}
-          url={
-            typeof item.media === 'string' ? item.media : item.media.data.uri
-          }
-        ></Card>
+        <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-4 p-5">
+          <Card
+            key={item.id}
+            username={getAuthor(item)}
+            charityId={
+              charityId && charityId.value != null ? charityId.value! : '-'
+            }
+            title={item.title}
+            price={{ fraction: getPrice(item), token: 'NEAR' }}
+            url={
+              typeof item.media === 'string' ? item.media : item.media.data.uri
+            }
+          ></Card>
+        </div>
       )}
     </div>
   )
