@@ -15,6 +15,20 @@ export interface ItemWithMetadata {
   thing: MintMetadata
 }
 
+export interface Token {
+  id: string
+  ownerId: string
+  minter: string
+}
+
+export interface StoreDetails {
+  id: string
+  things: {
+    id: string
+    tokens: Token[]
+  }[]
+}
+
 // Helper functions
 
 export const charityIdFromItem = (item: ItemWithMetadata): string | null => {
@@ -31,7 +45,8 @@ export const charityIdFromItem = (item: ItemWithMetadata): string | null => {
 export const mediaUriFromItem = (item: ItemWithMetadata): string | null => {
   return typeof item.thing.media === 'string'
     ? item.thing.media
-    : item.thing.media.data.uri
+    : //@ts-ignore
+      item.thing.media.data.uri
 }
 
 // API interaction
@@ -51,9 +66,7 @@ export const fetchMyItemsMetadata = async (
   )
 }
 
-export const fetchMyItems = async (
-  mintbase: IWallet
-): Promise<ItemDetails[]> => {
+const fetchMyItems = async (mintbase: IWallet): Promise<ItemDetails[]> => {
   if (!mintbase.activeAccount) throw new Error('Account is undefined.')
 
   return fetchUserItemsInStore(
@@ -93,4 +106,39 @@ const fetchUserItemsInStore = async (
   )
   if (error) throw error
   return data['token']
+}
+
+export const fetchStoreDetails = async (
+  mintbase: IWallet,
+  storeId: string
+): Promise<StoreDetails> => {
+  if (!mintbase.api) throw new Error('API is not defined.')
+
+  // TODO: Filter empty tokens in GQL
+  const query = `
+  query GetStore($storeId: String!) {
+    store(where: {id: {_eq: $storeId}}) {
+      id
+      things {
+        id
+        tokens(where: {burnedAt: {_is_null: true}}) {
+          id
+          ownerId
+          minter
+          burnedAt
+        }
+      }
+    }
+  }
+  `
+
+  const { data, error } = await mintbase.api.custom<{ store: StoreDetails[] }>(
+    query,
+    {
+      storeId,
+    }
+  )
+  if (error) throw error
+  const { id, things } = data['store'][0]
+  return { id, things: things.filter((t) => t.tokens.length > 0) }
 }

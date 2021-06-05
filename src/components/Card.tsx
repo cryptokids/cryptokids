@@ -43,10 +43,14 @@ const Card: React.FC<Props> = ({
             <p className="text-md text-gray-900">{title}</p>
           </div>
           <div>
-            {charities.state == 'hasValue' &&
-              charities.contents &&
-              charityById(charities.contents, charityId)}
-            <p className="text-grey-darker text-sm">Ⓝ{price.fraction}</p>
+            <p className="text-grey-darker text-sm text-right">
+              {charities.state == 'hasValue' &&
+                charities.contents &&
+                charityById(charities.contents, charityId)}
+            </p>
+            <p className="text-grey-darker text-sm text-right">
+              Ⓝ{price.fraction}
+            </p>
           </div>
         </header>
       </div>
@@ -61,6 +65,19 @@ export const CardControlls: React.FC = ({ children }) => {
       <header className="flex items-center justify-between leading-tight p-2 md:p-4">
         {children}
       </header>{' '}
+    </div>
+  )
+}
+
+export const CardShimmer: React.FC = () => {
+  return (
+    <div className="bg-white-900 shadow-md rounded p-3 hover:shadow-xl w-min-60 w-min:w-80">
+      <div className="w-full">
+        <div className="lg:h-48 bg-gray-400 md:h-36 w-full object-cover object-center"></div>
+        <div className="p-5">
+          <h1 className="mb-4 h-6 animate-pulse bg-gray-500 w-40"></h1>
+        </div>
+      </div>
     </div>
   )
 }
