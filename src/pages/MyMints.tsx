@@ -1,63 +1,62 @@
-import React, { useEffect, useState } from 'react'
-import { useRecoilValue } from 'recoil'
-import { IAccount, IWallet, nearState } from '../state/near'
-import Card from '../components/Card'
-import { Attribute } from 'mintbase'
+import React from 'react'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { nearState } from '../state/near'
+import Card, { CardControlls } from '../components/Card'
+import {
+  charityIdFromItem,
+  ItemWithMetadata,
+  mediaUriFromItem,
+} from '../state/items'
+import { myItemsSelector } from '../state/myItems'
+import Loader from '../components/Loadaer'
 
-const ThingCard: React.FC<{ thing: any }> = ({ thing }) => {
-  const extras =
-    thing.extra != null && Array.isArray(thing.extra) ? thing.extra : []
-  const charityId = extras.find((c: Attribute) => c.trait_type === 'charityId')
+const ThingCard: React.FC<{
+  item: ItemWithMetadata
+  burn: (item: ItemWithMetadata) => void
+}> = ({ item, burn }) => {
+  const charityId = charityIdFromItem(item)
 
   return (
     <Card
-      username={thing.accountId}
-      charityId={charityId ? charityId.value : '-'}
-      title={thing.title}
+      username={item.ownerId}
+      charityId={charityId ? charityId : '-'}
+      title={item.thing.title}
       price={{ fraction: 1, token: 'NEAR' }}
-      url={typeof thing.media === 'string' ? thing.media : thing.media.data.uri}
-    ></Card>
+      url={mediaUriFromItem(item)}
+    >
+      <CardControlls>
+        <button
+          onClick={() => {
+            burn(item)
+          }}
+          className="uppercase px-8 py-2 border border-blue-600 text-blue-600 max-w-max shadow-sm hover:shadow-lg"
+        >
+          Burn
+        </button>
+      </CardControlls>
+    </Card>
   )
 }
 
 const MyMints: React.FC = () => {
-  const { mintbase, account } = useRecoilValue(nearState)
-  const [things, setThings] = useState([] as {}[])
+  const { mintbase } = useRecoilValue(nearState)
+  const things = useRecoilValueLoadable(myItemsSelector)
 
-  useEffect(() => {
-    async function loadMarketplace(wallet: IWallet, account: IAccount) {
-      const { data, error } = await wallet.api!.fetchAccount(account.accountId)
-      if (error) {
-        console.error(error)
-        return
-      }
-      const { token } = data
-      Promise.all(
-        token.map(async (t: { thing: { id: string }; id: string }) => {
-          console.log(t)
-          const { data } = await wallet.api!.fetchThingMetadata(t.thing.id)
-          return data
-            ? { ...data, id: t.id, accountId: account.accountId }
-            : null
-        })
-      ).then((result) => {
-        console.log(result)
-        setThings(result as any[])
-      })
-
-      console.log(token)
-    }
-    if (mintbase && account) {
-      loadMarketplace(mintbase, account)
-    }
-  }, [setThings])
+  const burn = async (thing: ItemWithMetadata) => {
+    await mintbase.burn([thing.id])
+  }
 
   return (
-    <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5">
-      {things.map((thing, idx) => {
-        return <ThingCard key={`thing_${idx}`} thing={thing} />
-      })}
-    </div>
+    <>
+      {things.state === 'loading' && <Loader />}
+      {things.state === 'hasValue' && things.contents && (
+        <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5">
+          {things.contents.map((item, idx) => {
+            return <ThingCard key={`thing_${idx}`} item={item} burn={burn} />
+          })}
+        </div>
+      )}
+    </>
   )
 }
 
