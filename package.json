@@ -58,7 +58,7 @@
     "autoprefixer": "^10.2.6",
     "heroicons": "^1.0.1",
     "mintbase": "^0.1.8",
-    "near-api-js": "0.40.0",
+    "near-api-js": "0.41.0",
     "near-seed-phrase": "^0.2.0",
     "postcss": "^8.3.0",
     "react": ">=15",
