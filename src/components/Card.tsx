@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 import { charitiesState, ICharitiesData } from '../state/charities'
 
@@ -21,7 +21,14 @@ const charityById = (
   return charity ? charity.title : '-'
 }
 
-const Card: React.FC<Props> = ({ username, title, price, url, charityId }) => {
+const Card: React.FC<Props> = ({
+  username,
+  title,
+  price,
+  url,
+  charityId,
+  children,
+}) => {
   const charities = useRecoilValueLoadable(charitiesState)
 
   return (
@@ -43,6 +50,17 @@ const Card: React.FC<Props> = ({ username, title, price, url, charityId }) => {
           </div>
         </header>
       </div>
+      {children != null && children}
+    </div>
+  )
+}
+
+export const CardControlls: React.FC = ({ children }) => {
+  return (
+    <div className="col-span-3 row-span-1">
+      <header className="flex items-center justify-between leading-tight p-2 md:p-4">
+        {children}
+      </header>{' '}
     </div>
   )
 }
