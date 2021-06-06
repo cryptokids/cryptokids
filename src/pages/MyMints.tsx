@@ -5,6 +5,7 @@ import Card, { CardControlls } from '../components/Card'
 import {
   charityIdFromItem,
   ItemWithMetadata,
+  listAThing,
   mediaUriFromItem,
 } from '../state/items'
 import { myItemsSelector } from '../state/myItems'
@@ -13,7 +14,8 @@ import Loader from '../components/Loadaer'
 const ThingCard: React.FC<{
   item: ItemWithMetadata
   burn: (item: ItemWithMetadata) => void
-}> = ({ item, burn }) => {
+  list: (item: ItemWithMetadata) => void
+}> = ({ item, burn, list }) => {
   const charityId = charityIdFromItem(item)
 
   return (
@@ -33,6 +35,14 @@ const ThingCard: React.FC<{
         >
           Burn
         </button>
+        <button
+          onClick={() => {
+            list(item)
+          }}
+          className="uppercase px-8 py-2 border border-blue-600 text-blue-600 max-w-max shadow-sm hover:shadow-lg"
+        >
+          List
+        </button>
       </CardControlls>
     </Card>
   )
@@ -47,13 +57,24 @@ const MyMints: React.FC = () => {
     await mintbase.burn(item.tokens.map((t) => t.id))
   }
 
+  const list = async (item: ItemWithMetadata) => {
+    await listAThing(mintbase, item)
+  }
+
   return (
     <>
       {things.state === 'loading' && <Loader />}
       {things.state === 'hasValue' && things.contents && (
         <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5">
           {things.contents.map((item, idx) => {
-            return <ThingCard key={`thing_${idx}`} item={item} burn={burn} />
+            return (
+              <ThingCard
+                key={`thing_${idx}`}
+                item={item}
+                burn={burn}
+                list={list}
+              />
+            )
           })}
         </div>
       )}

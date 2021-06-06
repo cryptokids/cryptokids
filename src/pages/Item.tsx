@@ -1,17 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Card from '../components/Card'
-import { useRecoilValueLoadable } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { useParams } from 'react-router-dom'
 import {
   fetchItemMetadata,
   charityIdFromItem,
   mediaUriFromItem,
+  ItemWithMetadata,
+  isUserCanBuyAnItem,
+  makeAnOffer,
 } from '../state/items'
+import { IWallet, nearState } from '../state/near'
 
 const Item: React.FC = () => {
   let { itemId } = useParams<{ itemId: string }>()
 
   const metadata = useRecoilValueLoadable(fetchItemMetadata({ id: itemId }))
+  const { mintbase } = useRecoilValue(nearState)
+  const [canBuy, setCanBuy] = useState(false)
+
+  useEffect(() => {
+    async function checkStatus(mintbase: IWallet, metadata: ItemWithMetadata) {
+      const canBuy = await isUserCanBuyAnItem(mintbase, metadata)
+      setCanBuy(canBuy)
+    }
+    if (metadata.state === 'hasValue' && metadata.contents) {
+      checkStatus(mintbase, metadata.contents)
+    }
+  }, [metadata])
 
   // TODO: Handle error state
   return (
@@ -27,9 +43,16 @@ const Item: React.FC = () => {
             url={mediaUriFromItem(metadata.contents)}
           />
           <div className="p-5">
-            <button className="uppercase px-8 py-2 border border-blue-600 text-blue-600 max-w-max shadow-sm hover:shadow-lg">
-              Buy
-            </button>
+            {canBuy && (
+              <button
+                onClick={async () => {
+                  await makeAnOffer(mintbase, metadata.contents)
+                }}
+                className="uppercase px-8 py-2 border border-blue-600 text-blue-600 max-w-max shadow-sm hover:shadow-lg"
+              >
+                Buy
+              </button>
+            )}
           </div>
         </>
       )}

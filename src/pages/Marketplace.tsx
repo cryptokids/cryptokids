@@ -36,6 +36,7 @@ const Marketplace: React.FC = () => {
   if (marketplace.state === 'loading') {
     return <Loader />
   }
+  console.log(marketplace.contents)
 
   return (
     <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5">
