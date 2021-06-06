@@ -11,6 +11,7 @@ To run this project locally:
 
 ```
 MINTBASE_API_KEY=<your key>
+MINTBASE_CONTRACT=<mintbase store>
 ```
 
 2. Install dependencies: `yarn install`
