@@ -1,33 +1,59 @@
+import * as mintabseAapi from 'mintbase'
 import { MintMetadata } from 'mintbase'
-import { IWallet, mintbaseContract } from './near'
-
-interface ItemDetails {
-  id: string
-  ownerId: string
-  thing: {
-    id: string
-  }
-}
+import { selectorFamily } from 'recoil'
+import urlcat from 'urlcat'
+import { IWallet, nearState } from './near'
 
 export interface ItemWithMetadata {
   id: string
-  ownerId: string
+  minter: string
+  tokens: Token[]
   thing: MintMetadata
 }
 
-export interface Token {
-  id: string
-  ownerId: string
+export interface Token extends mintabseAapi.Token {
   minter: string
 }
 
-export interface StoreDetails {
+export interface StoreThings {
   id: string
-  things: {
-    id: string
-    tokens: Token[]
-  }[]
+  tokens: Token[]
 }
+
+interface ExtendedStoreThings extends StoreThings {
+  metaId: string
+  store: {
+    baseUri: string
+  }
+}
+
+export const fetchItemMetadata = selectorFamily<
+  ItemWithMetadata,
+  { id: string }
+>({
+  key: 'itemsMetadata/fetch',
+  get:
+    ({ id }) =>
+    async ({ get }) => {
+      const { mintbase } = get(nearState)
+
+      const storeThing = await fetchThingById(mintbase, id)
+
+      const metadataUri = urlcat(storeThing.store.baseUri, storeThing.metaId)
+      const { data: metadata, error } = await mintbase.api!.fetchMetadata(
+        metadataUri
+      )
+      if (metadata == null) throw error
+
+      return {
+        id,
+        tokens: storeThing.tokens,
+        minter: storeThing.tokens[0].minter,
+        thing: metadata,
+      }
+    },
+  dangerouslyAllowMutability: true,
+})
 
 // Helper functions
 
@@ -51,94 +77,36 @@ export const mediaUriFromItem = (item: ItemWithMetadata): string | null => {
 
 // API interaction
 
-export const fetchMyItemsMetadata = async (
-  mintbase: IWallet
-): Promise<ItemWithMetadata[]> => {
-  if (!mintbase.api) throw new Error('API is not defined.')
-
-  const items = await fetchMyItems(mintbase)
-  return Promise.all(
-    items.map(async (item) => {
-      const { data }: { data: MintMetadata } =
-        await mintbase.api!.fetchThingMetadata(item.thing.id)
-      return { ...item, thing: { ...data, id: item.thing.id } }
-    })
-  )
-}
-
-const fetchMyItems = async (mintbase: IWallet): Promise<ItemDetails[]> => {
-  if (!mintbase.activeAccount) throw new Error('Account is undefined.')
-
-  return fetchUserItemsInStore(
-    mintbase,
-    mintbase.activeAccount.accountId,
-    mintbaseContract
-  )
-}
-
-const fetchUserItemsInStore = async (
+const fetchThingById = async (
   mintbase: IWallet,
-  accountId: string,
-  storeId: string
-): Promise<ItemDetails[]> => {
+  thingId: string
+): Promise<ExtendedStoreThings> => {
   if (!mintbase.api) throw new Error('API is not defined.')
 
   const query = `
-  query GetUserItems($storeId: String!, $accountId: String!) {
-    token(where: {
-      store: {id: {_eq: $storeId}}, 
-      minter: {_eq: $accountId}, 
-      burnedAt: {_is_null: true}}) {
+  query GetThingById($thingId: String!) {
+    thing(where: {tokens: {burnedAt: {_is_null: true}}, id: {_eq: $thingId}}) {
       id
-      ownerId
-      thing {
-        id 
+      metaId
+      store {
+        baseUri
       }
-    }
-  }
-  `
-  const { data, error } = await mintbase.api.custom<{ token: ItemDetails[] }>(
-    query,
-    {
-      accountId,
-      storeId,
-    }
-  )
-  if (error) throw error
-  return data['token']
-}
-
-export const fetchStoreDetails = async (
-  mintbase: IWallet,
-  storeId: string
-): Promise<StoreDetails> => {
-  if (!mintbase.api) throw new Error('API is not defined.')
-
-  // TODO: Filter empty tokens in GQL
-  const query = `
-  query GetStore($storeId: String!) {
-    store(where: {id: {_eq: $storeId}}) {
-      id
-      things {
+      tokens {
         id
-        tokens(where: {burnedAt: {_is_null: true}}) {
-          id
-          ownerId
-          minter
-          burnedAt
-        }
+        thingId
+        storeId
+        ownerId
+        minter
       }
     }
   }
   `
 
-  const { data, error } = await mintbase.api.custom<{ store: StoreDetails[] }>(
-    query,
-    {
-      storeId,
-    }
-  )
+  const { data, error } = await mintbase.api.custom<{
+    thing: ExtendedStoreThings[]
+  }>(query, {
+    thingId,
+  })
   if (error) throw error
-  const { id, things } = data['store'][0]
-  return { id, things: things.filter((t) => t.tokens.length > 0) }
+  return data['thing'][0]
 }

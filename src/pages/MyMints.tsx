@@ -18,7 +18,7 @@ const ThingCard: React.FC<{
 
   return (
     <Card
-      username={item.ownerId}
+      username={item.minter}
       charityId={charityId ? charityId : '-'}
       title={item.thing.title}
       price={{ fraction: 1, token: 'NEAR' }}
@@ -42,8 +42,9 @@ const MyMints: React.FC = () => {
   const { mintbase } = useRecoilValue(nearState)
   const things = useRecoilValueLoadable(myItemsSelector)
 
-  const burn = async (thing: ItemWithMetadata) => {
-    await mintbase.burn([thing.id])
+  const burn = async (item: ItemWithMetadata) => {
+    // Burn all tokens from this item
+    await mintbase.burn(item.tokens.map((t) => t.id))
   }
 
   return (

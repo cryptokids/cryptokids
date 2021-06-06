@@ -4,22 +4,22 @@ import Card, { CardShimmer } from '../components/Card'
 import { useRecoilValueLoadable } from 'recoil'
 import Loader from '../components/Loadaer'
 import { marketplaceSelector } from '../state/marketplace'
-import { fetchItemMetadata } from '../state/marketplace'
-import { charityIdFromItem, mediaUriFromItem, Token } from '../state/items'
+import {
+  charityIdFromItem,
+  fetchItemMetadata,
+  mediaUriFromItem,
+} from '../state/items'
 
 const LoadingCard: React.FC<{
   id: string
-  tokens: Token[]
-}> = ({ id, tokens }) => {
-  const metadata = useRecoilValueLoadable(
-    fetchItemMetadata({ id, ownerId: tokens[0]!.ownerId })
-  )
+}> = ({ id }) => {
+  const metadata = useRecoilValueLoadable(fetchItemMetadata({ id }))
 
   if (metadata.state === 'hasValue' && metadata.contents) {
     return (
       <Card
         id={id}
-        username={metadata.contents.ownerId}
+        username={metadata.contents.minter}
         title={metadata.contents.thing.title}
         price={{ fraction: 1, token: 'NEAR' }}
         charityId={charityIdFromItem(metadata.contents)}
@@ -33,7 +33,6 @@ const LoadingCard: React.FC<{
 
 const Marketplace: React.FC = () => {
   const marketplace = useRecoilValueLoadable(marketplaceSelector)
-
   if (marketplace.state === 'loading') {
     return <Loader />
   }
@@ -42,8 +41,8 @@ const Marketplace: React.FC = () => {
     <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5">
       {marketplace.state === 'hasValue' &&
         marketplace.contents &&
-        marketplace.contents.things.map((item) => {
-          return <LoadingCard key={item.id} id={item.id} tokens={item.tokens} />
+        marketplace.contents.map((item) => {
+          return <LoadingCard key={item.id} id={item.id} />
         })}
     </div>
   )

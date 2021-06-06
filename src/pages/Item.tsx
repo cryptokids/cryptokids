@@ -2,8 +2,11 @@ import React from 'react'
 import Card from '../components/Card'
 import { useRecoilValueLoadable } from 'recoil'
 import { useParams } from 'react-router-dom'
-import { fetchItemMetadata } from '../state/marketplace'
-import { charityIdFromItem, mediaUriFromItem } from '../state/items'
+import {
+  fetchItemMetadata,
+  charityIdFromItem,
+  mediaUriFromItem,
+} from '../state/items'
 
 const Item: React.FC = () => {
   let { itemId } = useParams<{ itemId: string }>()
@@ -12,16 +15,23 @@ const Item: React.FC = () => {
 
   // TODO: Handle error state
   return (
-    <div className="grid place-items-center sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-3 p-5">
+    <div className="place-items-center gap-3 p-5">
       {metadata.state === 'hasValue' && metadata.contents && (
-        <Card
-          id={itemId}
-          username={metadata.contents.ownerId}
-          title={metadata.contents.thing.title}
-          price={{ fraction: 1, token: 'NEAR' }}
-          charityId={charityIdFromItem(metadata.contents)}
-          url={mediaUriFromItem(metadata.contents)}
-        />
+        <>
+          <Card
+            id={itemId}
+            username={metadata.contents.minter}
+            title={metadata.contents.thing.title}
+            price={{ fraction: 1, token: 'NEAR' }}
+            charityId={charityIdFromItem(metadata.contents)}
+            url={mediaUriFromItem(metadata.contents)}
+          />
+          <div className="p-5">
+            <button className="uppercase px-8 py-2 border border-blue-600 text-blue-600 max-w-max shadow-sm hover:shadow-lg">
+              Buy
+            </button>
+          </div>
+        </>
       )}
     </div>
   )
