@@ -2,7 +2,7 @@ import * as mintabseAapi from 'mintbase'
 import { MintMetadata } from 'mintbase'
 import { selectorFamily } from 'recoil'
 import urlcat from 'urlcat'
-import { IWallet, nearState } from './near'
+import { IWallet, mintbaseContract, nearState } from './near'
 
 export interface ItemWithMetadata {
   id: string
@@ -26,6 +26,44 @@ interface ExtendedStoreThings extends StoreThings {
     baseUri: string
   }
 }
+
+const defaultPrice = '1000000000000000000000000'
+
+// Buy
+
+// Check if user can buy a token from an item
+export const isUserCanBuyAnItem = async (
+  mintbase: IWallet,
+  metadata: ItemWithMetadata
+): Promise<boolean> => {
+  const { data: isOwner } = await mintbase.api!.isTokenOwner(
+    mintbase.activeAccount!.accountId,
+    metadata.tokens[0].id
+  )
+  return !isOwner
+}
+
+export const listAThing = async (
+  mintbase: IWallet,
+  metadata: ItemWithMetadata
+) => {
+  let tokenId = metadata.tokens[0].id
+  tokenId = tokenId.split(':')[0]
+  await mintbase.list(tokenId, mintbaseContract, defaultPrice, {
+    autotransfer: true,
+  })
+}
+
+export const makeAnOffer = async (
+  mintbase: IWallet,
+  metadata: ItemWithMetadata
+) => {
+  // TODO: Do not hardcode a price
+  const { data } = await mintbase.makeOffer(metadata.tokens[0].id, defaultPrice)
+  console.log(data)
+}
+
+// Fetchs
 
 export const fetchItemMetadata = selectorFamily<
   ItemWithMetadata,
