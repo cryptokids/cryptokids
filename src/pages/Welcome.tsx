@@ -1,9 +1,18 @@
-import React from 'react'
-import { SignInLink } from '../components/AuthProvider'
+import React, { useContext } from 'react'
+import { Redirect } from 'react-router'
+import { useRecoilValue } from 'recoil'
+import { MintbaseContext } from '../contexts/mintbase'
+import { isLoggedInState, UserState } from '../state/authentication'
 
 type Props = {}
 
 const Welcome: React.FC<Props> = () => {
+  const { signIn } = useContext(MintbaseContext)
+  const loggedInState = useRecoilValue(isLoggedInState)
+
+  if (loggedInState != UserState.Anonymous) {
+    return <Redirect to="/marketplace" />
+  }
   return (
     <>
       <main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
@@ -21,14 +30,13 @@ const Welcome: React.FC<Props> = () => {
           </p>
           <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
             <div className="rounded-md shadow">
-              <SignInLink>
-                <a
-                  href="#"
-                  className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
-                >
-                  Sign in
-                </a>
-              </SignInLink>
+              <a
+                onClick={signIn}
+                href="#"
+                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
+              >
+                Sign in
+              </a>
             </div>
           </div>
         </div>

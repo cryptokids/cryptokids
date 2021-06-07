@@ -1,7 +1,7 @@
 import { MintMetadata } from 'mintbase'
 import { selector } from 'recoil'
 import { ItemWithMetadata, Token } from './items'
-import { IWallet, mintbaseContract, nearState } from './near'
+import { IWallet, mintbaseContract, network } from './near'
 
 export interface ThingDetails {
   id: string
@@ -10,11 +10,9 @@ export interface ThingDetails {
 
 export const myItemsSelector = selector<ItemWithMetadata[]>({
   key: 'myItemsSelector/fetch',
-  get: async ({ get }) => {
-    const { mintbase } = get(nearState)
-    return await fetchMyItemsMetadata(mintbase)
+  get: async () => {
+    return await fetchMyItemsMetadata(network.mintbase)
   },
-  dangerouslyAllowMutability: true,
 })
 
 const fetchMyItemsMetadata = async (

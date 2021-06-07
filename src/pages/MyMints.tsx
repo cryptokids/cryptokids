@@ -1,6 +1,5 @@
-import React from 'react'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
-import { nearState } from '../state/near'
+import React, { useContext } from 'react'
+import { useRecoilValueLoadable } from 'recoil'
 import Card, { CardControlls } from '../components/Card'
 import {
   charityIdFromItem,
@@ -10,6 +9,7 @@ import {
 } from '../state/items'
 import { myItemsSelector } from '../state/myItems'
 import Loader from '../components/Loadaer'
+import { MintbaseContext } from '../contexts/mintbase'
 
 const ThingCard: React.FC<{
   item: ItemWithMetadata
@@ -49,7 +49,9 @@ const ThingCard: React.FC<{
 }
 
 const MyMints: React.FC = () => {
-  const { mintbase } = useRecoilValue(nearState)
+  const {
+    network: { mintbase },
+  } = useContext(MintbaseContext)
   const things = useRecoilValueLoadable(myItemsSelector)
 
   const burn = async (item: ItemWithMetadata) => {

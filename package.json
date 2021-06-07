@@ -15,6 +15,7 @@
     "start": "echo The app is starting! It will automatically open in your browser when ready && env-cmd -f ./neardev/dev-account.env parcel src/index.html src/404.html --open",
     "dev": "nodemon --watch contract/src -e rs --exec \"npm run start\"",
     "test": "npm run build:contract:debug && cd contract && cargo test -- --nocapture && cd .. && jest test --runInBand",
+    "lint": "yarn run eslint . --ext .ts --ext .tsx",
     "format": "prettier ."
   },
   "devDependencies": {
