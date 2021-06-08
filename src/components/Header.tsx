@@ -47,7 +47,7 @@ const UserSettings: React.FC<{ signOut: () => void }> = ({ signOut }) => {
                 <Menu.Item key={item}>
                   <a
                     href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-200"
                   >
                     {item}
                   </a>
@@ -57,7 +57,7 @@ const UserSettings: React.FC<{ signOut: () => void }> = ({ signOut }) => {
                 <a
                   onClick={signOut}
                   href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-100"
                 >
                   {'Sign out'}
                 </a>
@@ -90,15 +90,15 @@ const MobileUserSettings: React.FC<{ signOut: () => void }> = ({ signOut }) => {
           <img className="h-10 w-10 rounded-full" src={avatar} alt="" />
         </div>
         <div className="ml-3">
-          <div className="text-base font-medium leading-none text-gray-400">
+          <div className="text-base font-medium leading-none text-gray-600">
             Tom Cook
           </div>
-          <div className="text-sm font-medium leading-none text-gray-400">
+          <div className="text-sm font-medium leading-none text-gray-600">
             tom@example.com
           </div>
         </div>
         <button
-          className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-white hover:bg-yellow-700 
+          className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-gray-600 hover:text-white hover:bg-yellow-700 
           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-800 focus:ring-white"
         >
           <span className="sr-only">View notifications</span>
@@ -110,14 +110,14 @@ const MobileUserSettings: React.FC<{ signOut: () => void }> = ({ signOut }) => {
           <a
             key={item}
             href="#"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-yellow-700"
+            className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-white hover:bg-yellow-700"
           >
             {item}
           </a>
         ))}
         <a
           onClick={signOut}
-          className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-yellow-700"
+          className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-white hover:bg-yellow-700"
           key="Sign out"
           href="#"
         >
@@ -137,7 +137,7 @@ const MobileAnonymousSettings: React.FC<{ signIn: () => void }> = ({
         <a
           onClick={signIn}
           href="#"
-          className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-yellow-700"
+          className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-white hover:bg-yellow-700"
         >
           {'Sign In'}
         </a>
@@ -179,7 +179,7 @@ const Header: React.FC = () => {
                           <NavLink
                             key={item.link}
                             to={item.link}
-                            className="text-gray-300  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-md font-medium"
+                            className="text-gray-500  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-md font-medium"
                             activeClassName="text-gray-800 dark:text-white  hover:text-gray-800 dark:hover:text-white"
                           >
                             {item.name}
@@ -191,7 +191,7 @@ const Header: React.FC = () => {
                 </div>
                 <div className="hidden md:block">
                   <div className="ml-4 flex items-center md:ml-6">
-                    <button className="bg-white p-1 rounded-full text-gray-400 hover:text-grey-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-800 focus:ring-white">
+                    <button className="bg-white p-1 rounded-full text-gray-600 hover:text-grey-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-800 focus:ring-white">
                       <span className="sr-only">View notifications</span>
                       <BellIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
@@ -227,7 +227,7 @@ const Header: React.FC = () => {
                     <NavLink
                       key={item.link}
                       to={item.link}
-                      className="text-gray-300 hover:bg-yellow-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                      className="text-gray-500 hover:bg-yellow-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
                       activeClassName="text-gray-800 dark:text-white  hover:text-white dark:hover:text-white"
                     >
                       {item.name}
