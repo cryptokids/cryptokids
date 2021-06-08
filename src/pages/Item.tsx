@@ -34,7 +34,7 @@ const Item: React.FC = () => {
 
   // TODO: Handle error state
   return (
-    <div className="grid place-items-center sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-3 p-5">
+    <div className="grid place-items-center sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-1 gap-3 p-5">
       {metadata.state === 'hasValue' && metadata.contents && (
         <>
           <Card
