@@ -1,14 +1,14 @@
-import { Fragment } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
-import { SignInLink, SignOutLink } from './AuthProvider'
-import React from 'react'
+import React, { Fragment, useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+import { Disclosure, Menu, Transition } from '@headlessui/react'
+import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
+
 import { isLoggedInState, UserState } from '../state/authentication'
 
 import logo from 'url:../assets/logo.png'
 import avatar from 'url:../assets/kid-avatar.png'
+import { MintbaseContext } from '../contexts/mintbase'
 
 const navigation = [
   { name: 'Marketplace', link: '/marketplace', auth: false },
@@ -18,7 +18,7 @@ const navigation = [
 ]
 const profile = ['Your Profile', 'My Items', 'Settings']
 
-const UserSettings: React.FC = () => {
+const UserSettings: React.FC<{ signOut: () => void }> = ({ signOut }) => {
   return (
     <Menu as="div" className="ml-3 relative">
       {({ open }) => (
@@ -54,14 +54,13 @@ const UserSettings: React.FC = () => {
                 </Menu.Item>
               ))}
               <Menu.Item key={'Sign out'}>
-                <SignOutLink>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    {'Sign out'}
-                  </a>
-                </SignOutLink>
+                <a
+                  onClick={signOut}
+                  href="#"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  {'Sign out'}
+                </a>
               </Menu.Item>
             </Menu.Items>
           </Transition>
@@ -71,20 +70,19 @@ const UserSettings: React.FC = () => {
   )
 }
 
-const AnonymousSettings: React.FC = () => {
+const AnonymousSettings: React.FC<{ signIn: () => void }> = ({ signIn }) => {
   return (
-    <SignInLink>
-      <a
-        href="#"
-        className="text-gray-400 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-      >
-        {'Sign In'}
-      </a>
-    </SignInLink>
+    <a
+      onClick={signIn}
+      href="#"
+      className="text-gray-400 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+    >
+      {'Sign In'}
+    </a>
   )
 }
 
-const MobileUserSettings: React.FC = () => {
+const MobileUserSettings: React.FC<{ signOut: () => void }> = ({ signOut }) => {
   return (
     <div className="pt-4 pb-3 border-t border-gray-700">
       <div className="flex items-center px-5">
@@ -117,38 +115,39 @@ const MobileUserSettings: React.FC = () => {
             {item}
           </a>
         ))}
-        <SignOutLink>
-          <a
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
-            key="Sign out"
-            href="#"
-          >
-            Sign out
-          </a>
-        </SignOutLink>
+        <a
+          onClick={signOut}
+          className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
+          key="Sign out"
+          href="#"
+        >
+          Sign out
+        </a>
       </div>
     </div>
   )
 }
 
-const MobileAnonymousSettings: React.FC = () => {
+const MobileAnonymousSettings: React.FC<{ signIn: () => void }> = ({
+  signIn,
+}) => {
   return (
     <div className="pt-4 pb-3 border-t border-gray-700">
       <div className="mt-3 px-2 space-y-1">
-        <SignInLink>
-          <a
-            href="#"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
-          >
-            {'Sign In'}
-          </a>
-        </SignInLink>
+        <a
+          onClick={signIn}
+          href="#"
+          className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
+        >
+          {'Sign In'}
+        </a>
       </div>
     </div>
   )
 }
 
 const Header: React.FC = () => {
+  const { signIn, signOut } = useContext(MintbaseContext)
   const isLoggedIn = useRecoilValue(isLoggedInState)
 
   return (
@@ -198,9 +197,9 @@ const Header: React.FC = () => {
                     </button>
                     {/* Profile dropdown */}
                     {isLoggedIn == UserState.LogIn ? (
-                      <UserSettings />
+                      <UserSettings signOut={signOut} />
                     ) : (
-                      <AnonymousSettings />
+                      <AnonymousSettings signIn={signIn} />
                     )}
                   </div>
                 </div>
@@ -220,22 +219,27 @@ const Header: React.FC = () => {
 
             <Disclosure.Panel className="md:hidden">
               <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                {navigation.map((item) => (
-                  <NavLink
-                    key={item.link}
-                    to={item.link}
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-                    activeClassName="text-gray-800 dark:text-white  hover:text-white dark:hover:text-white"
-                  >
-                    {item.name}
-                  </NavLink>
-                ))}
+                {navigation.map((item) => {
+                  if (item.auth && isLoggedIn != UserState.LogIn) {
+                    return null
+                  }
+                  return (
+                    <NavLink
+                      key={item.link}
+                      to={item.link}
+                      className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                      activeClassName="text-gray-800 dark:text-white  hover:text-white dark:hover:text-white"
+                    >
+                      {item.name}
+                    </NavLink>
+                  )
+                })}
               </div>
               {/* Profile description */}
               {isLoggedIn == UserState.LogIn ? (
-                <MobileUserSettings />
+                <MobileUserSettings signOut={signOut} />
               ) : (
-                <MobileAnonymousSettings />
+                <MobileAnonymousSettings signIn={signIn} />
               )}
             </Disclosure.Panel>
           </>

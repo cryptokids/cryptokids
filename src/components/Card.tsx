@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import React from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 import { charitiesState, ICharitiesData } from '../state/charities'
 import { Link } from 'react-router-dom'

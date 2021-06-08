@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Card from '../components/Card'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useRecoilValueLoadable } from 'recoil'
 import { useParams } from 'react-router-dom'
 import {
   fetchItemMetadata,
@@ -10,13 +10,16 @@ import {
   isUserCanBuyAnItem,
   makeAnOffer,
 } from '../state/items'
-import { IWallet, nearState } from '../state/near'
+import { IWallet } from '../state/near'
+import { MintbaseContext } from '../contexts/mintbase'
 
 const Item: React.FC = () => {
   let { itemId } = useParams<{ itemId: string }>()
 
   const metadata = useRecoilValueLoadable(fetchItemMetadata({ id: itemId }))
-  const { mintbase } = useRecoilValue(nearState)
+  const {
+    network: { mintbase },
+  } = useContext(MintbaseContext)
   const [canBuy, setCanBuy] = useState(false)
 
   useEffect(() => {

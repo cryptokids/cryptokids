@@ -1,14 +1,12 @@
 import { selector } from 'recoil'
 import { StoreThings } from './items'
-import { IWallet, mintbaseContract, nearState } from './near'
+import { IWallet, mintbaseContract, network } from './near'
 
 export const marketplaceSelector = selector<StoreThings[]>({
   key: 'marketplaceSelector/fetch',
-  get: async ({ get }) => {
-    const { mintbase } = get(nearState)
-    return await fetchMarketplaceThings(mintbase, mintbaseContract)
+  get: async () => {
+    return await fetchMarketplaceThings(network.mintbase, mintbaseContract)
   },
-  dangerouslyAllowMutability: true,
 })
 
 export const fetchMarketplaceThings = async (
