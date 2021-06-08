@@ -1,13 +1,9 @@
 import React from 'react'
 import './styles/tailwind.css'
-import { useRecoilValueLoadable } from 'recoil'
-import { useRecoilValue } from 'recoil'
 import { ToastContainer } from 'react-toastify'
-import { Redirect, Route, Switch } from 'react-router'
+import { Route, Switch } from 'react-router'
 import { BrowserRouter as Router } from 'react-router-dom'
-import { nearState } from './state/near'
-import { AuthProvider, AuthRoute } from './components/AuthProvider'
-import { isLoggedInState, UserState } from './state/authentication'
+import { AuthRoute } from './components/AuthRoute'
 
 import 'react-toastify/dist/ReactToastify.css'
 import Header from './components/Header'
@@ -22,63 +18,45 @@ import Greeting from './pages/Greeting'
 import Item from './pages/Item'
 
 const App: React.FC = () => {
-  // Load near library
-  const loadNear = useRecoilValueLoadable(nearState)
-  const loggedInState = useRecoilValue(isLoggedInState)
-
   return (
-    <>
-      <div className="flex flex-col h-screen">
-        <React.Fragment>
-          <ToastContainer position="bottom-right" autoClose={5000} />
-          <React.Suspense fallback={<div>Loading...</div>}>
-            {loadNear.state == 'hasValue' && loadNear.contents && (
-              <AuthProvider>
-                <Router basename={process.env.PUBLIC_URL || '/'}>
-                  <CallbackWatcher />
-                  <Header />
-                  <main className="flex-grow">
-                    <Switch>
-                      <Route path="/greeting">
-                        <Greeting />
-                      </Route>
-                      <Route path="/marketplace">
-                        <Marketplace />
-                      </Route>
-                      <Route path="/dashboard">
-                        <AuthRoute>
-                          <Dashboard />
-                        </AuthRoute>
-                      </Route>
-                      <Route path="/activity">
-                        <Activity />
-                      </Route>
-                      <Route path="/charities">
-                        <Charities />
-                      </Route>
-                      <Route path="/welcome">
-                        <Welcome />
-                      </Route>
-                      <Route path="/item/:itemId">
-                        <Item />
-                      </Route>
-                      <Route exact path="/">
-                        {loggedInState != UserState.Anonymous ? (
-                          <Redirect to="/marketplace" />
-                        ) : (
-                          <Welcome />
-                        )}
-                      </Route>
-                    </Switch>
-                  </main>
-                  <Footer />
-                </Router>
-              </AuthProvider>
-            )}
-          </React.Suspense>
-        </React.Fragment>
-      </div>
-    </>
+    <div className="flex flex-col h-screen">
+      <ToastContainer position="bottom-right" autoClose={5000} />
+      <Router basename={process.env.PUBLIC_URL || '/'}>
+        <CallbackWatcher />
+        <Header />
+        <main className="flex-grow">
+          <Switch>
+            <Route path="/marketplace">
+              <Marketplace />
+            </Route>
+            <Route path="/activity">
+              <Activity />
+            </Route>
+            <Route path="/dashboard">
+              <AuthRoute>
+                <Dashboard />
+              </AuthRoute>
+            </Route>
+            <Route path="/charities">
+              <Charities />
+            </Route>
+            <Route path="/welcome">
+              <Welcome />
+            </Route>
+            <Route path="/item/:itemId">
+              <Item />
+            </Route>
+            <Route path="/greeting">
+              <Greeting />
+            </Route>
+            <Route exact path="/">
+              <Welcome />
+            </Route>
+          </Switch>
+        </main>
+        <Footer />
+      </Router>
+    </div>
   )
 }
 

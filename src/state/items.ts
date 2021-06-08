@@ -2,7 +2,7 @@ import * as mintabseAapi from 'mintbase'
 import { MintMetadata } from 'mintbase'
 import { selectorFamily } from 'recoil'
 import urlcat from 'urlcat'
-import { IWallet, mintbaseContract, nearState } from './near'
+import { IWallet, mintbaseContract, network } from './near'
 
 export interface ItemWithMetadata {
   id: string
@@ -72,15 +72,12 @@ export const fetchItemMetadata = selectorFamily<
   key: 'itemsMetadata/fetch',
   get:
     ({ id }) =>
-    async ({ get }) => {
-      const { mintbase } = get(nearState)
-
-      const storeThing = await fetchThingById(mintbase, id)
+    async () => {
+      const storeThing = await fetchThingById(network.mintbase, id)
 
       const metadataUri = urlcat(storeThing.store.baseUri, storeThing.metaId)
-      const { data: metadata, error } = await mintbase.api!.fetchMetadata(
-        metadataUri
-      )
+      const { data: metadata, error } =
+        await network.mintbase.api!.fetchMetadata(metadataUri)
       if (metadata == null) throw error
 
       return {
@@ -90,7 +87,6 @@ export const fetchItemMetadata = selectorFamily<
         thing: metadata,
       }
     },
-  dangerouslyAllowMutability: true,
 })
 
 // Helper functions

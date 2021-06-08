@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { charitiesState, ICharitiesData } from '../state/charities'
-import { mintThing, nearState } from '../state/near'
+import { mintThing } from '../state/near'
 
 import loader from 'url:../assets/loader.gif'
+import { MintbaseContext } from '../contexts/mintbase'
 
 const FilePreview: React.FC<{ file: any }> = ({ file }) => {
   const url = URL.createObjectURL(file)
@@ -50,7 +51,9 @@ const MintButton: React.FC<{ onClick?: () => void }> = ({ onClick }) => {
 }
 
 const Mint: React.FC = () => {
-  const { mintbase } = useRecoilValue(nearState)
+  const {
+    network: { mintbase },
+  } = useContext(MintbaseContext)
   const charities = useRecoilValueLoadable(charitiesState)
   const [isLoading, setLoading] = useState(false)
   const [formState, setFormState] = useState<{

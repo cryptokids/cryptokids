@@ -1,23 +1,22 @@
+import React, { useContext, useEffect } from 'react'
 import { FinalExecutionStatus } from 'near-api-js/lib/providers/provider'
-import React, { useEffect } from 'react'
 import { useLocation } from 'react-router'
 import { toast } from 'react-toastify'
-import { useRecoilValue } from 'recoil'
-import { nearState } from '../state/near'
+import { MintbaseContext } from '../contexts/mintbase'
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search)
 }
 
 const CallbackWatcher: React.FC = () => {
-  const { mintbase } = useRecoilValue(nearState)
+  const { network } = useContext(MintbaseContext)
   const query = useQuery()
 
   useEffect(() => {
     const transactions = query.getAll('transactionHashes')
-    if (mintbase && transactions.length > 0) {
+    if (network && network.mintbase && transactions.length > 0) {
       transactions.map(async (tx) => {
-        const result = await mintbase.fetchTransactionResult(tx)
+        const result = await network.mintbase.fetchTransactionResult(tx)
         console.log(result)
         if (result.error) {
           toast.error(result.error)

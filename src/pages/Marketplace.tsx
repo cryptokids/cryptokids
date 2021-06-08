@@ -1,14 +1,14 @@
 import React from 'react'
-import Card, { CardShimmer } from '../components/Card'
-
 import { useRecoilValueLoadable } from 'recoil'
-import Loader from '../components/Loadaer'
+
 import { marketplaceSelector } from '../state/marketplace'
 import {
   charityIdFromItem,
   fetchItemMetadata,
   mediaUriFromItem,
 } from '../state/items'
+import Card, { CardShimmer } from '../components/Card'
+import Loader from '../components/Loadaer'
 
 const LoadingCard: React.FC<{
   id: string
@@ -36,7 +36,6 @@ const Marketplace: React.FC = () => {
   if (marketplace.state === 'loading') {
     return <Loader />
   }
-  console.log(marketplace.contents)
 
   return (
     <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5">

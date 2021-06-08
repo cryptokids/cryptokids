@@ -1,14 +1,16 @@
 import { useRecoilValue, useRecoilState } from 'recoil'
 import { userState } from '../state/authentication'
-import { greetingState } from '../state/greeting'
-import { IGreetingContract, nearState, networkId } from '../state/near'
+import { greetingState, IGreetingContract } from '../state/greeting'
+import { networkId } from '../state/near'
 import GreetingForm from '../components/GreetingForm'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useContext, useEffect } from 'react'
 import { toast } from 'react-toastify'
+import { GreetingContext } from '../contexts/greeting'
 
 const Greeting: React.FC = () => {
+  const contract = useContext(GreetingContext)
   const userInfo = useRecoilValue(userState)
-  const { contract } = useRecoilValue(nearState)
+
   const [greeting, setGreeting] = useRecoilState(greetingState)
 
   const updateGreeting = useCallback(
