@@ -27,7 +27,7 @@ const CharityCard: React.FC<Props> = ({ title, description, logo, url }) => {
         </header>
       </div>
       <div className="flex justify-between  items-center text-gray-900">
-        <button className="px-6  py-2 mb-5 transition ease-in duration-200 m-auto uppercase rounded-full hover:bg-gray-800 hover:text-white border-2 border-gray-900 focus:outline-none">
+        <button className="px-6  py-2 mb-5 transition ease-in duration-200 m-auto uppercase rounded-full hover:bg-yellow-800 hover:text-white border-2 border-yellow-900 focus:outline-none">
           Explore Related Items
         </button>
       </div>
