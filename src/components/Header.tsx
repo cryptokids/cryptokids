@@ -24,7 +24,7 @@ const UserSettings: React.FC<{ signOut: () => void }> = ({ signOut }) => {
       {({ open }) => (
         <>
           <div>
-            <Menu.Button className="max-w-xs bg-white rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+            <Menu.Button className="max-w-xs bg-white rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-800 focus:ring-white">
               <span className="sr-only">Open user menu</span>
               <img className="h-8 w-8 rounded-full" src={avatar} alt="" />
             </Menu.Button>
@@ -47,7 +47,7 @@ const UserSettings: React.FC<{ signOut: () => void }> = ({ signOut }) => {
                 <Menu.Item key={item}>
                   <a
                     href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-200"
                   >
                     {item}
                   </a>
@@ -57,7 +57,7 @@ const UserSettings: React.FC<{ signOut: () => void }> = ({ signOut }) => {
                 <a
                   onClick={signOut}
                   href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-200"
                 >
                   {'Sign out'}
                 </a>
@@ -75,7 +75,7 @@ const AnonymousSettings: React.FC<{ signIn: () => void }> = ({ signIn }) => {
     <a
       onClick={signIn}
       href="#"
-      className="text-gray-400 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+      className="text-gray-400 hover:text-white hover:bg-yellow-700 px-3 py-2 rounded-md text-sm font-medium"
     >
       {'Sign In'}
     </a>
@@ -84,22 +84,22 @@ const AnonymousSettings: React.FC<{ signIn: () => void }> = ({ signIn }) => {
 
 const MobileUserSettings: React.FC<{ signOut: () => void }> = ({ signOut }) => {
   return (
-    <div className="pt-4 pb-3 border-t border-gray-700">
+    <div className="pt-4 pb-3 border-t border-yellow-700">
       <div className="flex items-center px-5">
         <div className="flex-shrink-0">
           <img className="h-10 w-10 rounded-full" src={avatar} alt="" />
         </div>
         <div className="ml-3">
-          <div className="text-base font-medium leading-none text-gray-400">
+          <div className="text-base font-medium leading-none text-gray-600">
             Tom Cook
           </div>
-          <div className="text-sm font-medium leading-none text-gray-400">
+          <div className="text-sm font-medium leading-none text-gray-600">
             tom@example.com
           </div>
         </div>
         <button
-          className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-white hover:bg-gray-700 
-          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+          className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-gray-600 hover:text-white hover:bg-yellow-700 
+          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-800 focus:ring-white"
         >
           <span className="sr-only">View notifications</span>
           <BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -110,14 +110,14 @@ const MobileUserSettings: React.FC<{ signOut: () => void }> = ({ signOut }) => {
           <a
             key={item}
             href="#"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
+            className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-white hover:bg-yellow-700"
           >
             {item}
           </a>
         ))}
         <a
           onClick={signOut}
-          className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
+          className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-white hover:bg-yellow-700"
           key="Sign out"
           href="#"
         >
@@ -132,12 +132,12 @@ const MobileAnonymousSettings: React.FC<{ signIn: () => void }> = ({
   signIn,
 }) => {
   return (
-    <div className="pt-4 pb-3 border-t border-gray-700">
+    <div className="pt-4 pb-3 border-t border-yellow-700">
       <div className="mt-3 px-2 space-y-1">
         <a
           onClick={signIn}
           href="#"
-          className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
+          className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-white hover:bg-yellow-700"
         >
           {'Sign In'}
         </a>
@@ -164,7 +164,7 @@ const Header: React.FC = () => {
                   <div className="w-auto px-4">
                     <a
                       className="text-xl text-gray-800 font-semibold font-heading"
-                      href="#"
+                      href="/"
                     >
                       CryptoKids
                     </a>
@@ -179,7 +179,7 @@ const Header: React.FC = () => {
                           <NavLink
                             key={item.link}
                             to={item.link}
-                            className="text-gray-300  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-md font-medium"
+                            className="text-gray-500  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-md font-medium"
                             activeClassName="text-gray-800 dark:text-white  hover:text-gray-800 dark:hover:text-white"
                           >
                             {item.name}
@@ -191,7 +191,7 @@ const Header: React.FC = () => {
                 </div>
                 <div className="hidden md:block">
                   <div className="ml-4 flex items-center md:ml-6">
-                    <button className="bg-white p-1 rounded-full text-gray-400 hover:text-grey-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                    <button className="bg-white p-1 rounded-full text-gray-600 hover:text-grey-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-800 focus:ring-white">
                       <span className="sr-only">View notifications</span>
                       <BellIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
@@ -205,7 +205,7 @@ const Header: React.FC = () => {
                 </div>
                 <div className="-mr-2 flex md:hidden">
                   {/* Mobile menu button */}
-                  <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                  <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-800 focus:ring-white">
                     <span className="sr-only">Open main menu</span>
                     {open ? (
                       <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -227,7 +227,7 @@ const Header: React.FC = () => {
                     <NavLink
                       key={item.link}
                       to={item.link}
-                      className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                      className="text-gray-500 hover:bg-yellow-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
                       activeClassName="text-gray-800 dark:text-white  hover:text-white dark:hover:text-white"
                     >
                       {item.name}

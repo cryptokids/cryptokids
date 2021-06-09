@@ -7,7 +7,6 @@ const Charities: React.FC = () => {
   const charities = useRecoilValue(charitiesState)
 
   return (
-    // grid place-items-center min-h-screen bg-gradient-to-t from-blue-200 to-indigo-900 p-5
     <div className="grid place-items-center sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-3 gap-4 p-5">
       {charities.map((charity) => {
         return (

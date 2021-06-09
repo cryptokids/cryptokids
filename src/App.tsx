@@ -16,6 +16,7 @@ import Activity from './pages/Activity'
 import CallbackWatcher from './components/CallbackWatcher'
 import Greeting from './pages/Greeting'
 import Item from './pages/Item'
+import Mint from './pages/Mint'
 
 const App: React.FC = () => {
   return (
@@ -31,6 +32,11 @@ const App: React.FC = () => {
             </Route>
             <Route path="/activity">
               <Activity />
+            </Route>
+            <Route path="/mint">
+              <AuthRoute>
+                <Mint />
+              </AuthRoute>
             </Route>
             <Route path="/dashboard">
               <AuthRoute>
