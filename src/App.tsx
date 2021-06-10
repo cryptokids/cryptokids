@@ -22,7 +22,7 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col h-screen">
       <ToastContainer position="bottom-right" autoClose={5000} />
-      <Router basename={process.env.PUBLIC_URL || '/'}>
+      <Router>
         <CallbackWatcher />
         <Header />
         <main className="flex-grow">
