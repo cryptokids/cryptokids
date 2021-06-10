@@ -84,6 +84,7 @@ export const fetchItemMetadata = selectorFamily<
         id,
         tokens: storeThing.tokens,
         minter: storeThing.tokens[0].minter,
+        ownerId: storeThing.tokens[0].ownerId,
         thing: metadata,
       }
     },

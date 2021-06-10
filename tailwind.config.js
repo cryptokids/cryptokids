@@ -1,4 +1,5 @@
 const colors = require('tailwindcss/colors')
+const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
   purge: ['./src/**/*.html', './src/**/*.js'],
@@ -14,6 +15,10 @@ module.exports = {
       indigo: colors.indigo,
       red: colors.rose,
       yellow: colors.amber,
+    },
+    screens: {
+      xs: '500px',
+      ...defaultTheme.screens,
     },
   },
   variants: {
