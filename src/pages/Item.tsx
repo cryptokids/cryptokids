@@ -6,9 +6,10 @@ import {
   fetchItemMetadata,
   charityIdFromItem,
   mediaUriFromItem,
-  ItemWithMetadata,
+  ThingWithMetadata,
   isUserCanBuyAnItem,
   makeAnOffer,
+  priceFromItem,
 } from '../state/items'
 import { IWallet } from '../state/near'
 import { MintbaseContext } from '../contexts/mintbase'
@@ -16,14 +17,14 @@ import { MintbaseContext } from '../contexts/mintbase'
 const Item: React.FC = () => {
   let { itemId } = useParams<{ itemId: string }>()
 
-  const metadata = useRecoilValueLoadable(fetchItemMetadata({ id: itemId }))
+  const metadata = useRecoilValueLoadable(fetchItemMetadata({ thing: itemId }))
   const {
     network: { mintbase },
   } = useContext(MintbaseContext)
   const [canBuy, setCanBuy] = useState(false)
 
   useEffect(() => {
-    async function checkStatus(mintbase: IWallet, metadata: ItemWithMetadata) {
+    async function checkStatus(mintbase: IWallet, metadata: ThingWithMetadata) {
       const canBuy = await isUserCanBuyAnItem(mintbase, metadata)
       setCanBuy(canBuy)
     }
@@ -39,9 +40,9 @@ const Item: React.FC = () => {
         <>
           <Card
             id={itemId}
-            username={metadata.contents.minter}
-            title={metadata.contents.thing.title}
-            price={{ fraction: 1, token: 'NEAR' }}
+            username={metadata.contents.thing.tokens[0].minter}
+            title={metadata.contents.metadata.title}
+            price={priceFromItem(metadata.contents) || ''}
             charityId={charityIdFromItem(metadata.contents)}
             url={mediaUriFromItem(metadata.contents)}
           />

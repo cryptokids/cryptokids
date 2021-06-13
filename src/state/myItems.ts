@@ -1,6 +1,6 @@
 import { MintMetadata } from 'mintbase'
 import { selector } from 'recoil'
-import { ItemWithMetadata, Token } from './items'
+import { ThingWithMetadata, Token } from './items'
 import { IWallet, mintbaseContract, network } from './near'
 
 export interface ThingDetails {
@@ -8,7 +8,7 @@ export interface ThingDetails {
   tokens: Token[]
 }
 
-export const myItemsSelector = selector<ItemWithMetadata[]>({
+export const myItemsSelector = selector<ThingWithMetadata[]>({
   key: 'myItemsSelector/fetch',
   get: async () => {
     return await fetchMyItemsMetadata(network.mintbase)
@@ -17,7 +17,7 @@ export const myItemsSelector = selector<ItemWithMetadata[]>({
 
 const fetchMyItemsMetadata = async (
   mintbase: IWallet
-): Promise<ItemWithMetadata[]> => {
+): Promise<ThingWithMetadata[]> => {
   if (!mintbase.api) throw new Error('API is not defined.')
 
   const items = await fetchMyItems(mintbase)

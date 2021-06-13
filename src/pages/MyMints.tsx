@@ -3,7 +3,7 @@ import { useRecoilValueLoadable } from 'recoil'
 import Card, { CardControlls } from '../components/Card'
 import {
   charityIdFromItem,
-  ItemWithMetadata,
+  ThingWithMetadata,
   listAThing,
   mediaUriFromItem,
 } from '../state/items'
@@ -12,9 +12,9 @@ import Loader from '../components/Loadaer'
 import { MintbaseContext } from '../contexts/mintbase'
 
 const ThingCard: React.FC<{
-  item: ItemWithMetadata
-  burn: (item: ItemWithMetadata) => void
-  list: (item: ItemWithMetadata) => void
+  item: ThingWithMetadata
+  burn: (item: ThingWithMetadata) => void
+  list: (item: ThingWithMetadata) => void
 }> = ({ item, burn, list }) => {
   const charityId = charityIdFromItem(item)
 
@@ -54,12 +54,12 @@ const MyMints: React.FC = () => {
   } = useContext(MintbaseContext)
   const things = useRecoilValueLoadable(myItemsSelector)
 
-  const burn = async (item: ItemWithMetadata) => {
+  const burn = async (item: ThingWithMetadata) => {
     // Burn all tokens from this item
     await mintbase.burn(item.tokens.map((t) => t.id))
   }
 
-  const list = async (item: ItemWithMetadata) => {
+  const list = async (item: ThingWithMetadata) => {
     await listAThing(mintbase, item)
   }
 
