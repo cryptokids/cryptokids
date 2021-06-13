@@ -1,7 +1,6 @@
-import * as mintabseAapi from 'mintbase'
 import { MintMetadata } from 'mintbase'
 import { formatNearAmount } from 'near-api-js/lib/utils/format'
-import { selectorFamily, SerializableParam } from 'recoil'
+import { selectorFamily } from 'recoil'
 import urlcat from 'urlcat'
 import { IWallet, mintbaseContract, network } from './near'
 
@@ -34,6 +33,12 @@ export type StoreThing = {
   tokens: Token[]
 }
 
+export enum ThingStatus {
+  minted = 'MINTED',
+  listed = 'LISTED',
+  sold = 'SOLD',
+}
+
 const defaultPrice = '1000000000000000000000000'
 
 // Buy
@@ -47,7 +52,21 @@ export const isUserCanBuyAnItem = async (
     mintbase.activeAccount!.accountId,
     thing.thing.tokens[0].id
   )
-  return !isOwner
+  const isSold = thing.thing.tokens[0].list?.acceptedOfferId != undefined
+  return !isOwner && !isSold
+}
+
+export const burnTokensOfThing = async (
+  mintbase: IWallet,
+  thing: ThingWithMetadata
+) => {
+  // Burn all tokens from this item
+  mintbase.burn(
+    thing.thing.tokens
+      // Found all not solded tokens
+      .filter((t) => t.list === null || t.list.acceptedOfferId === null)
+      .map((t) => t.id)
+  )
 }
 
 export const listAThing = async (
@@ -66,10 +85,9 @@ export const makeAnOffer = async (
   thing: ThingWithMetadata
 ) => {
   // TODO: Do not hardcode a price and find a first not bought token in the list
-  const { data } = await mintbase.makeOffer(
-    thing.thing.tokens[0].id,
-    defaultPrice
-  )
+  let tokenId = thing.thing.tokens[0].id
+  console.log(tokenId)
+  const { data } = await mintbase.makeOffer(tokenId, defaultPrice)
   console.log(data)
 }
 
@@ -104,6 +122,17 @@ export const fetchItemMetadata = selectorFamily<
 })
 
 // Helper functions
+
+export const thingStatus = (thing: ThingWithMetadata): ThingStatus => {
+  const listedTokens = thing.thing.tokens.find((t) => t.list !== null)
+  if (listedTokens !== undefined) {
+    if (listedTokens?.list?.acceptedOfferId !== null) {
+      return ThingStatus.sold
+    }
+    return ThingStatus.listed
+  }
+  return ThingStatus.minted
+}
 
 export const charityIdFromItem = (item: ThingWithMetadata): string | null => {
   const extras =
