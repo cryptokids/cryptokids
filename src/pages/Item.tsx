@@ -6,7 +6,7 @@ import {
   fetchItemMetadata,
   charityIdFromItem,
   mediaUriFromItem,
-  ThingWithMetadata,
+  Item,
   isUserCanBuyAnItem,
   makeAnOffer,
   priceFromItem,
@@ -14,7 +14,7 @@ import {
 import { IWallet } from '../state/near'
 import { MintbaseContext } from '../contexts/mintbase'
 
-const Item: React.FC = () => {
+const ItemPage: React.FC = () => {
   let { itemId } = useParams<{ itemId: string }>()
 
   const metadata = useRecoilValueLoadable(fetchItemMetadata({ thing: itemId }))
@@ -24,7 +24,7 @@ const Item: React.FC = () => {
   const [canBuy, setCanBuy] = useState(false)
 
   useEffect(() => {
-    async function checkStatus(mintbase: IWallet, metadata: ThingWithMetadata) {
+    async function checkStatus(mintbase: IWallet, metadata: Item) {
       const canBuy = await isUserCanBuyAnItem(mintbase, metadata)
       setCanBuy(canBuy)
     }
@@ -64,4 +64,4 @@ const Item: React.FC = () => {
   )
 }
 
-export default Item
+export default ItemPage

@@ -3,14 +3,14 @@ import {
   fetchItemMetadata,
   mediaUriFromItem,
   priceFromItem,
-  StoreThing,
+  StoreItem,
 } from '../state/items'
 import Card, { CardShimmer } from '../components/Card'
 import { useRecoilValueLoadable } from 'recoil'
 import React from 'react'
 
 const LoadingCard: React.FC<{
-  thing: string | StoreThing
+  thing: string | StoreItem
 }> = ({ thing }) => {
   const metadata = useRecoilValueLoadable(fetchItemMetadata({ thing }))
 

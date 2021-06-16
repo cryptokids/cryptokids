@@ -4,12 +4,12 @@ import { selectorFamily } from 'recoil'
 import urlcat from 'urlcat'
 import { IWallet, mintbaseContract, network } from './near'
 
-export interface ThingWithMetadata {
-  thing: StoreThing
+// Item from the API and loaded metadata
+export interface Item {
+  thing: StoreItem
   metadata: MintMetadata
 }
 
-// mintabseAapi.Token
 export type Token = {
   id: string
   thingsId: string
@@ -24,7 +24,8 @@ export type Token = {
   } | null
 }
 
-export type StoreThing = {
+// Item thst we get from the API
+export type StoreItem = {
   id: string
   metaId: string
   store: {
@@ -33,7 +34,7 @@ export type StoreThing = {
   tokens: Token[]
 }
 
-export enum ThingStatus {
+export enum ItemStatus {
   minted = 'MINTED',
   listed = 'LISTED',
   sold = 'SOLD',
@@ -46,7 +47,7 @@ const defaultPrice = '1000000000000000000000000'
 // Check if user can buy a token from an item
 export const isUserCanBuyAnItem = async (
   mintbase: IWallet,
-  thing: ThingWithMetadata
+  thing: Item
 ): Promise<boolean> => {
   const { data: isOwner } = await mintbase.api!.isTokenOwner(
     mintbase.activeAccount!.accountId,
@@ -56,10 +57,7 @@ export const isUserCanBuyAnItem = async (
   return !isOwner && !isSold
 }
 
-export const burnTokensOfThing = async (
-  mintbase: IWallet,
-  thing: ThingWithMetadata
-) => {
+export const burnTokensOfThing = async (mintbase: IWallet, thing: Item) => {
   // Burn all tokens from this item
   mintbase.burn(
     thing.thing.tokens
@@ -69,10 +67,7 @@ export const burnTokensOfThing = async (
   )
 }
 
-export const listAThing = async (
-  mintbase: IWallet,
-  thing: ThingWithMetadata
-) => {
+export const listAThing = async (mintbase: IWallet, thing: Item) => {
   let tokenId = thing.thing.tokens[0].id
   tokenId = tokenId.split(':')[0]
   await mintbase.list(tokenId, mintbaseContract, defaultPrice, {
@@ -80,10 +75,7 @@ export const listAThing = async (
   })
 }
 
-export const makeAnOffer = async (
-  mintbase: IWallet,
-  thing: ThingWithMetadata
-) => {
+export const makeAnOffer = async (mintbase: IWallet, thing: Item) => {
   // TODO: Do not hardcode a price and find a first not bought token in the list
   let tokenId = thing.thing.tokens[0].id
   console.log(tokenId)
@@ -94,15 +86,15 @@ export const makeAnOffer = async (
 // Fetchs
 
 export const fetchItemMetadata = selectorFamily<
-  ThingWithMetadata,
-  { thing: string | StoreThing }
+  Item,
+  { thing: string | StoreItem }
 >({
   key: 'itemsMetadata/fetch',
   get:
     ({ thing }) =>
     async () => {
       // If we already have a Thing, do not load details, only metadata
-      let storeThing: StoreThing
+      let storeThing: StoreItem
       if (typeof thing === 'string') {
         storeThing = await fetchThingById(network.mintbase, thing)
       } else {
@@ -123,18 +115,18 @@ export const fetchItemMetadata = selectorFamily<
 
 // Helper functions
 
-export const thingStatus = (thing: ThingWithMetadata): ThingStatus => {
+export const thingStatus = (thing: Item): ItemStatus => {
   const listedTokens = thing.thing.tokens.find((t) => t.list !== null)
   if (listedTokens !== undefined) {
     if (listedTokens?.list?.acceptedOfferId !== null) {
-      return ThingStatus.sold
+      return ItemStatus.sold
     }
-    return ThingStatus.listed
+    return ItemStatus.listed
   }
-  return ThingStatus.minted
+  return ItemStatus.minted
 }
 
-export const charityIdFromItem = (item: ThingWithMetadata): string | null => {
+export const charityIdFromItem = (item: Item): string | null => {
   const extras =
     item.metadata.extra != null && Array.isArray(item.metadata.extra)
       ? item.metadata.extra
@@ -145,14 +137,14 @@ export const charityIdFromItem = (item: ThingWithMetadata): string | null => {
     : null
 }
 
-export const mediaUriFromItem = (item: ThingWithMetadata): string | null => {
+export const mediaUriFromItem = (item: Item): string | null => {
   return typeof item.metadata.media === 'string'
     ? item.metadata.media
     : //@ts-ignore
       item.metadata.media.data.uri
 }
 
-export const priceFromItem = (item: ThingWithMetadata): string | null => {
+export const priceFromItem = (item: Item): string | null => {
   // Get price from an any token
   const token = item.thing.tokens[0]
   // Check is thing listed
@@ -195,7 +187,7 @@ fragment ThingDetails on things {
 const fetchThingById = async (
   mintbase: IWallet,
   thingId: string
-): Promise<StoreThing> => {
+): Promise<StoreItem> => {
   if (!mintbase.api) throw new Error('API is not defined.')
 
   const query = `
@@ -209,7 +201,7 @@ query GetThingById($thingId: String!) {
 `
 
   const { data, error } = await mintbase.api.custom<{
-    thing: StoreThing[]
+    thing: StoreItem[]
   }>(query, {
     thingId,
   })

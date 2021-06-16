@@ -3,12 +3,12 @@ import { useRecoilValueLoadable } from 'recoil'
 import Card, { CardControlls } from '../components/Card'
 import {
   charityIdFromItem,
-  ThingWithMetadata,
+  Item,
   listAThing,
   mediaUriFromItem,
   priceFromItem,
   thingStatus,
-  ThingStatus,
+  ItemStatus,
   burnTokensOfThing,
 } from '../state/items'
 import { myItemsState } from '../state/myItems'
@@ -16,9 +16,9 @@ import Loader from '../components/Loadaer'
 import { MintbaseContext } from '../contexts/mintbase'
 
 const ThingCard: React.FC<{
-  item: ThingWithMetadata
-  burn: (item: ThingWithMetadata) => void
-  list: (item: ThingWithMetadata) => void
+  item: Item
+  burn: (item: Item) => void
+  list: (item: Item) => void
 }> = ({ item, burn, list }) => {
   const status = thingStatus(item)
 
@@ -31,7 +31,7 @@ const ThingCard: React.FC<{
       url={mediaUriFromItem(item)}
     >
       <CardControlls>
-        {status !== ThingStatus.sold && (
+        {status !== ItemStatus.sold && (
           <button
             onClick={() => {
               burn(item)
@@ -41,7 +41,7 @@ const ThingCard: React.FC<{
             Burn
           </button>
         )}
-        {status === ThingStatus.minted && (
+        {status === ItemStatus.minted && (
           <button
             onClick={() => {
               list(item)
@@ -51,8 +51,8 @@ const ThingCard: React.FC<{
             List
           </button>
         )}
-        {status === ThingStatus.listed && <p>Listed at the market</p>}
-        {status === ThingStatus.sold && <p>Sold</p>}
+        {status === ItemStatus.listed && <p>Listed at the market</p>}
+        {status === ItemStatus.sold && <p>Sold</p>}
       </CardControlls>
     </Card>
   )
@@ -64,11 +64,11 @@ const MyMints: React.FC = () => {
   } = useContext(MintbaseContext)
   const things = useRecoilValueLoadable(myItemsState)
 
-  const burn = async (item: ThingWithMetadata) => {
+  const burn = async (item: Item) => {
     await burnTokensOfThing(mintbase, item)
   }
 
-  const list = async (item: ThingWithMetadata) => {
+  const list = async (item: Item) => {
     await listAThing(mintbase, item)
   }
 

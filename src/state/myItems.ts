@@ -1,23 +1,21 @@
 import { atom, selector } from 'recoil'
 import urlcat from 'urlcat'
-import { StoreThing, thingFragment, ThingWithMetadata } from './items'
+import { StoreItem, thingFragment, Item } from './items'
 import { IWallet, mintbaseContract, network } from './near'
 
-const myItemsSelector = selector<ThingWithMetadata[]>({
+const myItemsSelector = selector<Item[]>({
   key: 'myItemsSelector/fetch',
   get: async () => {
     return await fetchMyItemsMetadata(network.mintbase)
   },
 })
 
-export const myItemsState = atom<ThingWithMetadata[]>({
+export const myItemsState = atom<Item[]>({
   key: 'myItems/state',
   default: myItemsSelector,
 })
 
-const fetchMyItemsMetadata = async (
-  mintbase: IWallet
-): Promise<ThingWithMetadata[]> => {
+const fetchMyItemsMetadata = async (mintbase: IWallet): Promise<Item[]> => {
   if (!mintbase.api) throw new Error('API is not defined.')
 
   const items = await fetchMyItems(mintbase)
@@ -36,7 +34,7 @@ const fetchMyItemsMetadata = async (
   )
 }
 
-const fetchMyItems = async (mintbase: IWallet): Promise<StoreThing[]> => {
+const fetchMyItems = async (mintbase: IWallet): Promise<StoreItem[]> => {
   if (!mintbase.activeAccount) throw new Error('Account is undefined.')
   if (!mintbase.api) throw new Error('API is not defined.')
 
@@ -51,7 +49,7 @@ query GetUserItems($storeId: String!, $accountId: String!) {
   }
 }
   `
-  const { data, error } = await mintbase.api.custom<{ thing: StoreThing[] }>(
+  const { data, error } = await mintbase.api.custom<{ thing: StoreItem[] }>(
     query,
     {
       accountId: mintbase.activeAccount.accountId,

@@ -1,15 +1,15 @@
 import { atom, selector } from 'recoil'
-import { StoreThing, thingFragment } from './items'
+import { StoreItem, thingFragment } from './items'
 import { IWallet, mintbaseContract, network } from './near'
 
-const marketplaceSelector = selector<StoreThing[]>({
+const marketplaceSelector = selector<StoreItem[]>({
   key: 'marketplaceSelector/fetch',
   get: async () => {
     return await fetchMarketplaceThings(network.mintbase, mintbaseContract)
   },
 })
 
-export const marketplaceState = atom<StoreThing[]>({
+export const marketplaceState = atom<StoreItem[]>({
   key: 'marketplace/all',
   default: marketplaceSelector,
 })
@@ -17,7 +17,7 @@ export const marketplaceState = atom<StoreThing[]>({
 const fetchMarketplaceThings = async (
   mintbase: IWallet,
   storeId: string
-): Promise<StoreThing[]> => {
+): Promise<StoreItem[]> => {
   if (!mintbase.api) throw new Error('API is not defined.')
 
   // Get all things in the store that listed
@@ -33,7 +33,7 @@ query GetMarketplaceThings($storeId: String!) {
 }
 `
 
-  const { data, error } = await mintbase.api.custom<{ thing: StoreThing[] }>(
+  const { data, error } = await mintbase.api.custom<{ thing: StoreItem[] }>(
     query,
     {
       storeId,
