@@ -15,7 +15,7 @@ import Charities from './pages/Charities'
 import Activity from './pages/Activity'
 import CallbackWatcher from './components/CallbackWatcher'
 import Greeting from './pages/Greeting'
-import Item from './pages/Item'
+import ItemPage from './pages/Item'
 import Mint from './pages/Mint'
 
 const App: React.FC = () => {
@@ -50,7 +50,7 @@ const App: React.FC = () => {
               <Welcome />
             </Route>
             <Route path="/item/:itemId">
-              <Item />
+              <ItemPage />
             </Route>
             <Route path="/greeting">
               <Greeting />

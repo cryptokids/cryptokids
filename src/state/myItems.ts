@@ -1,60 +1,55 @@
-import { MintMetadata } from 'mintbase'
-import { selector } from 'recoil'
-import { ItemWithMetadata, Token } from './items'
+import { atom, selector } from 'recoil'
+import urlcat from 'urlcat'
+import { StoreItem, thingFragment, Item } from './items'
 import { IWallet, mintbaseContract, network } from './near'
 
-export interface ThingDetails {
-  id: string
-  tokens: Token[]
-}
-
-export const myItemsSelector = selector<ItemWithMetadata[]>({
+const myItemsSelector = selector<Item[]>({
   key: 'myItemsSelector/fetch',
   get: async () => {
     return await fetchMyItemsMetadata(network.mintbase)
   },
 })
 
-const fetchMyItemsMetadata = async (
-  mintbase: IWallet
-): Promise<ItemWithMetadata[]> => {
+export const myItemsState = atom<Item[]>({
+  key: 'myItems/state',
+  default: myItemsSelector,
+})
+
+const fetchMyItemsMetadata = async (mintbase: IWallet): Promise<Item[]> => {
   if (!mintbase.api) throw new Error('API is not defined.')
 
   const items = await fetchMyItems(mintbase)
   return Promise.all(
     items.map(async (item) => {
-      const { data }: { data: MintMetadata } =
-        await mintbase.api!.fetchThingMetadata(item.id)
+      const metadataUri = urlcat(item.store.baseUri, item.metaId)
+      const { data: metadata, error } =
+        await network.mintbase.api!.fetchMetadata(metadataUri)
+      if (metadata == null) throw error
+
       return {
-        ...item,
-        minter: item.tokens[0].minter,
-        thing: { ...data, id: item.id },
+        thing: item,
+        metadata,
       }
     })
   )
 }
 
-const fetchMyItems = async (mintbase: IWallet): Promise<ThingDetails[]> => {
+const fetchMyItems = async (mintbase: IWallet): Promise<StoreItem[]> => {
   if (!mintbase.activeAccount) throw new Error('Account is undefined.')
   if (!mintbase.api) throw new Error('API is not defined.')
 
   const query = `
-  query GetUserItems($storeId: String!, $accountId: String!) {
-    thing(where: {tokens: {burnedAt: {_is_null: true}, 
-      storeId: {_eq: $storeId}
-      minter: {_eq: $accountId}}}) {
-      id
-      tokens {
-        id
-        thingId
-        storeId
-        ownerId
-        minter
-      }
-    }
+${thingFragment}
+
+query GetUserItems($storeId: String!, $accountId: String!) {
+  thing(where: {tokens: {burnedAt: {_is_null: true}, 
+    storeId: {_eq: $storeId}
+    minter: {_eq: $accountId}}}) {
+    ...ThingDetails
   }
+}
   `
-  const { data, error } = await mintbase.api.custom<{ thing: ThingDetails[] }>(
+  const { data, error } = await mintbase.api.custom<{ thing: StoreItem[] }>(
     query,
     {
       accountId: mintbase.activeAccount.accountId,
@@ -62,5 +57,5 @@ const fetchMyItems = async (mintbase: IWallet): Promise<ThingDetails[]> => {
     }
   )
   if (error) throw error
-  return data['thing']
+  return data.thing
 }
