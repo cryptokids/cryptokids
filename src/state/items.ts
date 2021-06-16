@@ -35,7 +35,7 @@ export type StoreItem = {
 }
 
 export enum ItemStatus {
-  minted = 'MINTED',
+  unlisted = 'UNLISTED',
   listed = 'LISTED',
   sold = 'SOLD',
 }
@@ -123,7 +123,7 @@ export const thingStatus = (thing: Item): ItemStatus => {
     }
     return ItemStatus.listed
   }
-  return ItemStatus.minted
+  return ItemStatus.unlisted
 }
 
 export const charityIdFromItem = (item: Item): string | null => {

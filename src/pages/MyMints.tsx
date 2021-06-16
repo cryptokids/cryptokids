@@ -41,7 +41,7 @@ const ThingCard: React.FC<{
             Burn
           </button>
         )}
-        {status === ItemStatus.minted && (
+        {status === ItemStatus.unlisted && (
           <button
             onClick={() => {
               list(item)
