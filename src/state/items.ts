@@ -1,5 +1,6 @@
 import * as mintabseAapi from 'mintbase'
 import { MintMetadata } from 'mintbase'
+import { parseNearAmount } from 'near-api-js/lib/utils/format'
 import { selectorFamily } from 'recoil'
 import urlcat from 'urlcat'
 import { IWallet, mintbaseContract, network } from './near'
@@ -46,21 +47,28 @@ export const isUserCanBuyAnItem = async (
 export const listAThing = async (
   mintbase: IWallet,
   metadata: ItemWithMetadata
-) => {
+): Promise<boolean> => {
   let tokenId = metadata.tokens[0].id
   tokenId = tokenId.split(':')[0]
-  await mintbase.list(tokenId, mintbaseContract, defaultPrice, {
-    autotransfer: true,
-  })
+  const { data } = await mintbase.list(
+    tokenId,
+    mintbaseContract,
+    defaultPrice,
+    {
+      autotransfer: true,
+    }
+  )
+  return data
 }
 
 export const makeAnOffer = async (
-  mintbase: IWallet,
-  metadata: ItemWithMetadata
-) => {
-  // TODO: Do not hardcode a price
-  const { data } = await mintbase.makeOffer(metadata.tokens[0].id, defaultPrice)
-  console.log(data)
+  wallet: IWallet,
+  metadata: ItemWithMetadata,
+  offer: number
+): Promise<boolean> => {
+  const priceYocto = parseNearAmount(String(offer)) ?? defaultPrice
+  const { data } = await wallet.makeOffer(metadata.tokens[0].id, priceYocto)
+  return data
 }
 
 // Fetchs
