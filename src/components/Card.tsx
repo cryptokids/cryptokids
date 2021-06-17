@@ -9,10 +9,7 @@ type Props = {
   title: string
   url: any
   charityId: string | null
-  price: {
-    fraction: number
-    token: string
-  }
+  price: string
 }
 
 const charityById = (
@@ -62,9 +59,7 @@ const Card: React.FC<Props> = ({
                 charities.contents &&
                 charityById(charities.contents, charityId)}
             </p>
-            <p className="text-grey-darker text-sm text-right">
-              Ⓝ{price.fraction}
-            </p>
+            <p className="text-grey-darker text-sm text-right">Ⓝ{price}</p>
           </div>
         </header>
       </div>
