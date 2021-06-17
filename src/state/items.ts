@@ -68,10 +68,13 @@ export const burnTokensOfThing = async (mintbase: IWallet, thing: Item) => {
   )
 }
 
-export const listAThing = async (mintbase: IWallet, thing: Item) => {
+export const listAThing = async (
+  mintbase: IWallet,
+  thing: Item
+): Promise<boolean> => {
   let tokenId = thing.thing.tokens[0].id
   tokenId = tokenId.split(':')[0]
-  const { data } = await mintbase.list(
+  const { data, error } = await mintbase.list(
     tokenId,
     mintbaseContract,
     defaultPrice,
@@ -79,6 +82,7 @@ export const listAThing = async (mintbase: IWallet, thing: Item) => {
       autotransfer: true,
     }
   )
+  if (data == null) throw error
   return data
 }
 
@@ -87,11 +91,14 @@ export const makeAnOffer = async (
   metadata: Item,
   offer: number
 ): Promise<boolean> => {
-  const priceYocto = parseNearAmount(String(offer)) ?? defaultPrice
-  const { data } = await wallet.makeOffer(
+  const priceYocto = parseNearAmount(String(offer))
+  if (priceYocto == null)
+    throw new Error("Price parsing error. Couldn't parse " + offer)
+  const { data, error } = await wallet.makeOffer(
     metadata.thing.tokens[0].id,
     priceYocto
   )
+  if (data == null) throw error
   return data
 }
 
