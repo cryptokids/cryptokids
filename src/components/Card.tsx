@@ -31,9 +31,7 @@ const Card: React.FC<Props> = ({
 }) => {
   const charities = useRecoilValueLoadable(charitiesState)
 
-  const image = (
-    <img className="w-full md:w-68 block rounded" src={url} alt={title} />
-  )
+  const image = <img className="w-full block rounded" src={url} alt={title} />
 
   return (
     <div className="bg-white-900 shadow-md rounded p-3 hover:shadow-xl">

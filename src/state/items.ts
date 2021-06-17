@@ -1,4 +1,5 @@
 import { MintMetadata } from 'mintbase'
+import { parseNearAmount } from 'near-api-js/lib/utils/format'
 import { formatNearAmount } from 'near-api-js/lib/utils/format'
 import { selectorFamily } from 'recoil'
 import urlcat from 'urlcat'
@@ -67,20 +68,38 @@ export const burnTokensOfThing = async (mintbase: IWallet, thing: Item) => {
   )
 }
 
-export const listAThing = async (mintbase: IWallet, thing: Item) => {
+export const listAThing = async (
+  mintbase: IWallet,
+  thing: Item
+): Promise<boolean> => {
   let tokenId = thing.thing.tokens[0].id
   tokenId = tokenId.split(':')[0]
-  await mintbase.list(tokenId, mintbaseContract, defaultPrice, {
-    autotransfer: true,
-  })
+  const { data, error } = await mintbase.list(
+    tokenId,
+    mintbaseContract,
+    defaultPrice,
+    {
+      autotransfer: true,
+    }
+  )
+  if (data == null) throw error
+  return data
 }
 
-export const makeAnOffer = async (mintbase: IWallet, thing: Item) => {
-  // TODO: Do not hardcode a price and find a first not bought token in the list
-  let tokenId = thing.thing.tokens[0].id
-  console.log(tokenId)
-  const { data } = await mintbase.makeOffer(tokenId, defaultPrice)
-  console.log(data)
+export const makeAnOffer = async (
+  wallet: IWallet,
+  metadata: Item,
+  offer: number
+): Promise<boolean> => {
+  const priceYocto = parseNearAmount(String(offer))
+  if (priceYocto == null)
+    throw new Error("Price parsing error. Couldn't parse " + offer)
+  const { data, error } = await wallet.makeOffer(
+    metadata.thing.tokens[0].id,
+    priceYocto
+  )
+  if (data == null) throw error
+  return data
 }
 
 // Fetchs
@@ -109,6 +128,7 @@ export const fetchItemMetadata = selectorFamily<
       return {
         thing: storeThing,
         metadata,
+        ownerId: storeThing.tokens[0].ownerId,
       }
     },
 })

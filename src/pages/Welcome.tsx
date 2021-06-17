@@ -71,7 +71,7 @@ const Welcome: React.FC<Props> = () => {
             )}
           </div>
           <div className="inline-block pb-4 px-12">
-            <LoadingCard key={itemId} id={itemId} />
+            <LoadingCard key={itemId} thing={itemId} />
           </div>
         </div>
         <div className="grid place-items-center mb-4">
