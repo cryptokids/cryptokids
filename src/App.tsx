@@ -2,7 +2,7 @@ import React from 'react'
 import './styles/tailwind.css'
 import { ToastContainer } from 'react-toastify'
 import { Route, Switch } from 'react-router'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import { AuthRoute } from './components/AuthRoute'
 
 import 'react-toastify/dist/ReactToastify.css'
@@ -22,7 +22,7 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col h-screen">
       <ToastContainer position="bottom-right" autoClose={5000} />
-      <Router>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
         <CallbackWatcher />
         <Header />
         <main className="flex-grow">
@@ -61,7 +61,7 @@ const App: React.FC = () => {
           </Switch>
         </main>
         <Footer />
-      </Router>
+      </BrowserRouter>
     </div>
   )
 }
