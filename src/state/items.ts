@@ -88,7 +88,10 @@ export const makeAnOffer = async (
   offer: number
 ): Promise<boolean> => {
   const priceYocto = parseNearAmount(String(offer)) ?? defaultPrice
-  const { data } = await wallet.makeOffer(metadata.tokens[0].id, priceYocto)
+  const { data } = await wallet.makeOffer(
+    metadata.thing.tokens[0].id,
+    priceYocto
+  )
   return data
 }
 

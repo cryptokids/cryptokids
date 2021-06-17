@@ -71,7 +71,7 @@ const ItemPage: React.FC = () => {
               <h1 className="text-xl mt-3">
                 <span className="block lg:inline">Created by</span>{' '}
                 <span className="block text-yellow-700 lg:inline ">
-                  {metadata.contents.minter}
+                  {metadata.contents.thing?.tokens[0].minter}
                 </span>
               </h1>
               <h1 className="text-xl mt-1">
@@ -84,7 +84,7 @@ const ItemPage: React.FC = () => {
             </div>
             <div className="bg-gray-200 w-96 my-5 rounded-lg shadow block p-4 ">
               <div className="mt-5 mb-5 sm:flex ">
-                {metadata.contents.thing?.description}
+                {metadata.contents.metadata?.description}
               </div>
             </div>
           </div>
