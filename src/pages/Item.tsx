@@ -50,9 +50,9 @@ const ItemPage: React.FC = () => {
 
   // TODO: Handle error state
   return (
-    <div className="flex flex-row justify-center xs:flex-col sm:flex-col lg:flex-row px-4 ">
+    <div className="grid  sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 p-5">
       {metadata.state === 'hasValue' && metadata.contents && (
-        <div className="flex w-1/2 sm:flex-0 m-16">
+        <div className="p-4">
           <Card
             id={itemId}
             username={metadata.contents.thing.tokens[0].minter}
@@ -63,26 +63,26 @@ const ItemPage: React.FC = () => {
           />
         </div>
       )}
-      <div className="flex-1 lg:mt-16 md:mt-16 xs:mt-0 sm:mt-0 justify-center ">
-        <div className="flex-1 mt-5 mb-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
+      <div className="flex-1 xs:mt-0 sm:mt-0 p-4">
+        <div className="flex-1 mt-5 mb-5 ">
           <div>
             <div>
-              <h1 className="text-3xl">{metadata.contents.thing?.title}</h1>
+              <h1 className="text-3xl">{metadata.contents.metadata?.title}</h1>
               <h1 className="text-xl mt-3">
-                <span className="block lg:inline">Created by</span>{' '}
-                <span className="block text-yellow-700 lg:inline ">
+                <span className="inline">Created by</span>{' '}
+                <span className="inline text-yellow-700">
                   {metadata.contents.thing?.tokens[0].minter}
                 </span>
               </h1>
               <h1 className="text-xl mt-1">
-                <span className="block lg:inline">Owned by</span>
+                <span className="inline">Owned by</span>
                 {'  '}
-                <span className="block text-yellow-700 lg:inline ">
+                <span className="inline text-yellow-700">
                   {metadata.contents.ownerId}
                 </span>
               </h1>
             </div>
-            <div className="bg-gray-200 w-96 my-5 rounded-lg shadow block p-4 ">
+            <div className="bg-gray-200 my-5 rounded-lg shadow block p-4 ">
               <div className="mt-5 mb-5 sm:flex ">
                 {metadata.contents.metadata?.description}
               </div>
