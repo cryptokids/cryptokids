@@ -7,7 +7,7 @@ import {
   Item,
   isUserCanBuyAnItem,
   makeAnOffer,
-  thingStatus,
+  getItemStatus,
   ItemStatus,
   listAThing,
   burnTokensOfThing,
@@ -86,7 +86,7 @@ const ItemPage: React.FC = () => {
         {/* Check is me an owner */}
         {metadata.contents.thing?.tokens[0].minter === account.accountId && (
           <div className="flex flex-row">
-            {thingStatus(metadata.contents) !== ItemStatus.sold && (
+            {getItemStatus(metadata.contents) !== ItemStatus.sold && (
               <div className="p-1">
                 <button
                   onClick={async () => {
@@ -98,7 +98,7 @@ const ItemPage: React.FC = () => {
                 </button>
               </div>
             )}
-            {thingStatus(metadata.contents) === ItemStatus.unlisted && (
+            {getItemStatus(metadata.contents) === ItemStatus.unlisted && (
               <div className="p-1">
                 <button
                   onClick={async () => {
