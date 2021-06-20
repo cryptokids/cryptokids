@@ -4,12 +4,13 @@ import { useRecoilValueLoadable } from 'recoil'
 import { useParams } from 'react-router-dom'
 import {
   fetchItemMetadata,
-  charityIdFromItem,
-  mediaUriFromItem,
   Item,
   isUserCanBuyAnItem,
   makeAnOffer,
-  priceFromItem,
+  thingStatus,
+  ItemStatus,
+  listAThing,
+  burnTokensOfThing,
 } from '../state/items'
 import { IWallet } from '../state/near'
 import { MintbaseContext } from '../contexts/mintbase'
@@ -19,7 +20,7 @@ const ItemPage: React.FC = () => {
 
   const metadata = useRecoilValueLoadable(fetchItemMetadata({ thing: itemId }))
   const {
-    network: { mintbase },
+    network: { mintbase, account },
   } = useContext(MintbaseContext)
   const [canBuy, setCanBuy] = useState(false)
 
@@ -53,14 +54,7 @@ const ItemPage: React.FC = () => {
     <div className="grid  sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 p-5">
       {metadata.state === 'hasValue' && metadata.contents && (
         <div className="p-4">
-          <Card
-            id={itemId}
-            username={metadata.contents.thing.tokens[0].minter}
-            title={metadata.contents.metadata.title}
-            price={priceFromItem(metadata.contents) || ''}
-            charityId={charityIdFromItem(metadata.contents)}
-            url={mediaUriFromItem(metadata.contents)}
-          />
+          <Card item={metadata.contents} />
         </div>
       )}
       <div className="flex-1 xs:mt-0 sm:mt-0 p-4">
@@ -89,6 +83,42 @@ const ItemPage: React.FC = () => {
             </div>
           </div>
         </div>
+        {/* Check is me an owner */}
+        {metadata.contents.thing?.tokens[0].minter === account.accountId && (
+          <div className="flex flex-row">
+            {thingStatus(metadata.contents) !== ItemStatus.sold && (
+              <div className="p-1">
+                <button
+                  onClick={async () => {
+                    await burnTokensOfThing(mintbase, metadata.contents)
+                  }}
+                  className="uppercase px-8 py-2 border border-blue-600 text-blue-600 max-w-max shadow-sm hover:shadow-lg"
+                >
+                  Burn
+                </button>
+              </div>
+            )}
+            {thingStatus(metadata.contents) === ItemStatus.unlisted && (
+              <div className="p-1">
+                <button
+                  onClick={async () => {
+                    await listAThing(mintbase, metadata.contents)
+                  }}
+                  className="uppercase px-8 py-2 border border-blue-600 text-blue-600 max-w-max shadow-sm hover:shadow-lg"
+                >
+                  List
+                </button>
+              </div>
+            )}
+            {getItemStatus(metadata.contents) === ItemStatus.listed && (
+              <p>Listed at the market</p>
+            )}
+            {getItemStatus(metadata.contents) === ItemStatus.sold && (
+              <p>Sold</p>
+            )}
+          </div>
+        )}
+
         <div className="flex-1 mt-5 mb-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
           {canBuy && (
             <div className="">
