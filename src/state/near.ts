@@ -122,18 +122,7 @@ export const mintThing = async ({
       { trait_type: 'charityId', value: charity },
       { trait_type: 'minPrice', value: 10 },
     ])
-    const { data, error } = await minter.upload(thing[0])
-
-    if (error) {
-      console.error(error)
-      return
-    }
-
-    const { uri, hash } = data
-    minter.setField(mintbase.MetadataField.Media, uri)
-    minter.setField(mintbase.MetadataField.Media_hash, hash)
-    // Use `uploadField` after bumping a mintbase version, as they fixed it
-    // await minter.uploadField(mintbase.MetadataField.Media, url)
+    await minter.uploadField(mintbase.MetadataField.Media, thing[0])
 
     const response = await wallet.mint(1, mintbaseContract)
     console.log(response)

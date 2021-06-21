@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useRecoilValueLoadable } from 'recoil'
 import { charitiesState, ICharitiesData } from '../state/charities'
 import { mintThing } from '../state/near'
 
 import loader from 'url:../assets/loader.gif'
 import { MintbaseContext } from '../contexts/mintbase'
+import { toast } from 'react-toastify'
 
 const FilePreview: React.FC<{ file: any }> = ({ file }) => {
   const url = URL.createObjectURL(file)

@@ -58,10 +58,10 @@ export const isUserCanBuyAnItem = async (
   return !isOwner && !isSold
 }
 
-export const burnTokensOfThing = async (mintbase: IWallet, thing: Item) => {
+export const burnTokensOfThing = async (mintbase: IWallet, item: Item) => {
   // Burn all tokens from this item
   mintbase.burn(
-    thing.thing.tokens
+    item.thing.tokens
       // Found all not solded tokens
       .filter((t) => t.list === null || t.list.acceptedOfferId === null)
       .map((t) => t.id)
@@ -70,9 +70,10 @@ export const burnTokensOfThing = async (mintbase: IWallet, thing: Item) => {
 
 export const listAThing = async (
   mintbase: IWallet,
-  thing: Item
+  item: Item
 ): Promise<boolean> => {
-  let tokenId = thing.thing.tokens[0].id
+  // We get a first token here, but should list all of them
+  let tokenId = item.thing.tokens[0].id
   tokenId = tokenId.split(':')[0]
   const { data, error } = await mintbase.list(
     tokenId,
@@ -135,7 +136,7 @@ export const fetchItemMetadata = selectorFamily<
 
 // Helper functions
 
-export const thingStatus = (thing: Item): ItemStatus => {
+export const getItemStatus = (thing: Item): ItemStatus => {
   const listedTokens = thing.thing.tokens.find((t) => t.list !== null)
   if (listedTokens !== undefined) {
     if (listedTokens?.list?.acceptedOfferId !== null) {

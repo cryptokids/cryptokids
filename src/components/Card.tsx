@@ -2,14 +2,15 @@ import React from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 import { charitiesState, ICharitiesData } from '../state/charities'
 import { Link } from 'react-router-dom'
+import {
+  charityIdFromItem,
+  Item,
+  mediaUriFromItem,
+  priceFromItem,
+} from '../state/items'
 
 type Props = {
-  id?: string
-  username: string
-  title: string
-  url: any
-  charityId: string | null
-  price: string
+  item: Item
 }
 
 const charityById = (
@@ -20,32 +21,24 @@ const charityById = (
   return charity ? charity.title : '-'
 }
 
-const Card: React.FC<Props> = ({
-  id,
-  username,
-  title,
-  price,
-  url,
-  charityId,
-  children,
-}) => {
-  const charities = useRecoilValueLoadable(charitiesState)
+const Card: React.FC<Props> = ({ item, children }) => {
+  const username = item.thing.tokens[0].minter
+  const title = item.metadata.title
+  const price = priceFromItem(item)
+  const url = mediaUriFromItem(item)
 
-  const image = <img className="w-full block rounded" src={url} alt={title} />
+  const charities = useRecoilValueLoadable(charitiesState)
 
   return (
     <div className="bg-white-900 shadow-md rounded p-3 hover:shadow-xl">
       <div className="group">
-        {id && (
-          <Link
-            to={{
-              pathname: `/item/${id}`,
-            }}
-          >
-            {image}
-          </Link>
-        )}
-        {!id && image}
+        <Link
+          to={{
+            pathname: `/item/${item.thing.id}`,
+          }}
+        >
+          <img className="w-full block rounded" src={url || ''} alt={title} />
+        </Link>
       </div>
       <div className="col-span-3 row-span-1">
         <header className="flex items-center justify-between leading-tight p-2 md:p-4">
@@ -57,9 +50,11 @@ const Card: React.FC<Props> = ({
             <p className="text-grey-darker text-sm text-right">
               {charities.state == 'hasValue' &&
                 charities.contents &&
-                charityById(charities.contents, charityId)}
+                charityById(charities.contents, charityIdFromItem(item))}
             </p>
-            <p className="text-grey-darker text-sm text-right">Ⓝ{price}</p>
+            {price !== null && price?.length > 0 && (
+              <p className="text-grey-darker text-sm text-right">Ⓝ{price}</p>
+            )}
           </div>
         </header>
       </div>
