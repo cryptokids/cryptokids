@@ -9,7 +9,6 @@ import 'react-toastify/dist/ReactToastify.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Welcome from './pages/Welcome'
-import Dashboard from './pages/Dashboard'
 import Marketplace from './pages/Marketplace'
 import Charities from './pages/Charities'
 import Activity from './pages/Activity'
@@ -36,11 +35,6 @@ const App: React.FC = () => {
             <Route path="/mint">
               <AuthRoute>
                 <Mint />
-              </AuthRoute>
-            </Route>
-            <Route path="/dashboard">
-              <AuthRoute>
-                <Dashboard />
               </AuthRoute>
             </Route>
             <Route path="/charities">

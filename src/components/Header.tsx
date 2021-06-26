@@ -13,7 +13,7 @@ import { MintbaseContext } from '../contexts/mintbase'
 const navigation = [
   { name: 'Marketplace', link: '/marketplace', auth: false },
   { name: 'My Items', link: '/activity', auth: true },
-  { name: 'Mint', link: '/dashboard', auth: true },
+  { name: 'Mint', link: '/mint', auth: true },
   { name: 'Charities', link: '/charities', auth: false },
 ]
 const profile = ['Your Profile', 'My Items', 'Settings']
