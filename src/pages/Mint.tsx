@@ -7,6 +7,7 @@ import loader from 'url:../assets/loader.gif'
 import { MintbaseContext } from '../contexts/mintbase'
 import { FileField } from '../components/FileUploadField'
 import { FormField } from '../components/FormField'
+import { IPriceSplits, PriceSplitsField } from '../components/PriceSplitsField'
 
 const Mint: React.FC = () => {
   return (
@@ -40,14 +41,16 @@ type IFormState = {
   charity: IFormField<string> & {
     charities: ICharitiesData[]
   }
+  splits: IFormField<IPriceSplits>
   file: IFormField<any>
 }
 
 type IErrorsState = {
-  title: Array<string>
-  description: Array<string>
-  charity: Array<string>
-  file: Array<string>
+  title: string[]
+  description: string[]
+  charity: string[]
+  splits: string[]
+  file: string[]
 }
 
 const MintFormLoader: React.FC = () => {
@@ -64,6 +67,7 @@ const MintFormLoader: React.FC = () => {
       title: Array<string>(),
       description: Array<string>(),
       charity: Array<string>(),
+      splits: Array<string>(),
       file: Array<string>(),
     }
     if (form.title.value == null || form.title.value.length === 0) {
@@ -72,10 +76,19 @@ const MintFormLoader: React.FC = () => {
     if (form.description.value == null || form.description.value.length < 10) {
       formErrors.description.push('Description should be more then 10 chars')
     }
-    if (form.charity === null) {
+    if (form.charity.value === null) {
       formErrors.charity.push('Choose a charity before mint')
     }
-    if (form.file === null) {
+    // Get charity walet by id
+    const charity = form.charity.charities.find(
+      (c) => c.id === form.charity.value
+    )
+    if (!charity) {
+      formErrors.charity.push(
+        "Can't find a selected charity, please reload the page"
+      )
+    }
+    if (form.file.value === null) {
       formErrors.file.push('Choose an image before mint')
     }
 
@@ -92,7 +105,8 @@ const MintFormLoader: React.FC = () => {
       mintbase,
       title: form.title.value!,
       description: form.description.value!,
-      charity: form.charity.value!,
+      charity: charity!.near_wallet,
+      splits: form.splits.value!,
       file: form.file.value[0],
     })
     setLoading(false)
@@ -143,6 +157,14 @@ const MintForm: React.FC<{
       errors: [],
       charities,
     },
+    splits: {
+      value: {
+        creator: 5,
+        charity: 92.5,
+        cryptoKids: 2.5,
+      },
+      errors: [],
+    },
     file: {
       value: null,
       errors: [],
@@ -154,7 +176,6 @@ const MintForm: React.FC<{
     const target: HTMLInputElement = event.target as HTMLInputElement
     const name: string = target.name
     if (name in formState) {
-      let field = formState[name as keyof IFormState]
       let value: any
       switch (target.type) {
         case 'file':
@@ -168,6 +189,14 @@ const MintForm: React.FC<{
           break
       }
       // Update form
+      handleFormUpdate(name, value)
+    }
+  }
+
+  const handleFormUpdate = (name: string, value: any) => {
+    // Update form
+    let field = formState[name as keyof IFormState]
+    if (field) {
       field.value = value
       setFormState({ ...formState, [name]: field })
     }
@@ -206,7 +235,15 @@ const MintForm: React.FC<{
           })}
         </select>
       </FormField>
-      <FormField title="Picture">
+      <FormField title="Splits">
+        <PriceSplitsField
+          defaultValue={formState.splits.value}
+          onChange={(splits) => {
+            handleFormUpdate('splits', splits)
+          }}
+        />
+      </FormField>
+      <FormField title="Picture" errors={formState.file.errors}>
         <FileField
           file={formState.file.value}
           name="file"

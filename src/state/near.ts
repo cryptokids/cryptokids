@@ -105,22 +105,29 @@ export const mintItem = async ({
   title,
   description,
   charity,
+  splits,
   file,
 }: {
   mintbase: IWallet
   title: string
   description: string
   charity: string
+  splits: { creator: number; charity: number; cryptoKids: number }
   file?: any
 }) => {
   if (wallet.minter && title.length > 0 && file) {
     const minter = wallet.minter
     minter.setField(mintbase.MetadataField.Title, title)
     minter.setField(mintbase.MetadataField.Description, description)
+    minter.setField(mintbase.MetadataField.SplitRevenue, {
+      // Here we need to set our service contract
+      contractId: splits.cryptoKids,
+      // Set charity contract
+      charity: splits.charity,
+    })
 
     minter.setField(mintbase.MetadataField.Extra, [
-      { trait_type: 'charityId', value: charity },
-      { trait_type: 'minPrice', value: 10 },
+      { trait_type: 'charity', value: charity },
     ])
     await minter.uploadField(mintbase.MetadataField.Media, file)
 

@@ -17,7 +17,7 @@ const charityById = (
   charities: ICharitiesData[],
   id: string | null
 ): string => {
-  const charity = charities.find((c) => c.id === id)
+  const charity = charities.find((c) => c.id === id || c.near_wallet === id)
   return charity ? charity.title : '-'
 }
 
