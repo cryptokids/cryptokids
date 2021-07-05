@@ -152,7 +152,9 @@ export const charityIdFromItem = (item: Item): string | null => {
     item.metadata.extra != null && Array.isArray(item.metadata.extra)
       ? item.metadata.extra
       : []
-  const charityAttr = extras.find((c) => c.trait_type === 'charityId')
+  const charityAttr = extras.find(
+    (c) => c.trait_type === 'charityId' || c.trait_type === 'charity'
+  )
   return charityAttr && typeof charityAttr.value === 'string'
     ? charityAttr.value
     : null

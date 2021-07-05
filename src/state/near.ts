@@ -100,29 +100,36 @@ const mintabseNetwork = (networkId: string): mintbase.Network => {
 
 // Mint
 
-export const mintThing = async ({
+export const mintItem = async ({
   mintbase: wallet,
   title,
   description,
   charity,
-  thing,
+  splits,
+  file,
 }: {
   mintbase: IWallet
   title: string
   description: string
   charity: string
-  thing?: any[]
+  splits: { creator: number; charity: number; cryptoKids: number }
+  file?: any
 }) => {
-  if (wallet.minter && title.length > 0 && thing && thing.length > 0) {
+  if (wallet.minter && title.length > 0 && file) {
     const minter = wallet.minter
     minter.setField(mintbase.MetadataField.Title, title)
     minter.setField(mintbase.MetadataField.Description, description)
+    minter.setField(mintbase.MetadataField.SplitRevenue, {
+      // Here we need to set our service contract
+      contractId: splits.cryptoKids,
+      // Set charity contract
+      charity: splits.charity,
+    })
 
     minter.setField(mintbase.MetadataField.Extra, [
-      { trait_type: 'charityId', value: charity },
-      { trait_type: 'minPrice', value: 10 },
+      { trait_type: 'charity', value: charity },
     ])
-    await minter.uploadField(mintbase.MetadataField.Media, thing[0])
+    await minter.uploadField(mintbase.MetadataField.Media, file)
 
     const response = await wallet.mint(1, mintbaseContract)
     console.log(response)
