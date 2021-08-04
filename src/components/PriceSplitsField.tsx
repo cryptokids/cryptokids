@@ -6,6 +6,48 @@ export type IPriceSplits = {
   cryptoKids: number
 }
 
+export enum SplitInfoBarMode {
+  Percent = '%',
+  Nero = 'Ⓝ',
+}
+
+export const SplitInfoBar: React.FC<{
+  splits: IPriceSplits
+  mode?: SplitInfoBarMode
+}> = ({ splits, mode = SplitInfoBarMode.Percent }) => {
+  return (
+    <div>
+      <div className="bg-gray-200 my-5 rounded-lg w-auto shadow block p-4 m-auto">
+        <div>
+          <span className="text-xs font-light inline-block py-1 px-2 uppercase rounded-full text-black bg-indigo-300">
+            Creator
+          </span>
+          <span className="text-xs font-light inline-block py-1 px-2 uppercase rounded-full text-black bg-red-300">
+            Charity
+          </span>
+          <span className="text-xs font-light inline-block py-1 px-2 uppercase rounded-full text-black bg-yellow-300">
+            CryptoKids
+          </span>
+        </div>
+        <div className="w-full h-6 rounded-lg mt-3">
+          <div className="w-2/12 h-full rounded-l bg-indigo-400 items-center justify-center text-md font-light  text-black bg-pink-300 inline-flex">
+            {splits.creator}
+            {mode}
+          </div>
+          <div className="w-9/12 h-full bg-red-400 items-center justify-center text-md font-light  text-black bg-pink-300 inline-flex">
+            {splits.charity}
+            {mode}
+          </div>
+          <div className="w-1/12 h-full rounded-r bg-yellow-400 items-center justify-center text-md font-light  text-black bg-pink-300  inline-flex">
+            {splits.cryptoKids}
+            {mode}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export const PriceSplitsField: React.FC<{
   defaultValue: IPriceSplits | null
   onChange: (splits: IPriceSplits) => void
@@ -51,32 +93,7 @@ export const PriceSplitsField: React.FC<{
           />
         </div>
       </div>
-      <div>
-        <div className="bg-gray-200 my-5 rounded-lg w-auto shadow block p-4 m-auto">
-          <div>
-            <span className="text-xs font-light inline-block py-1 px-2 uppercase rounded-full text-black bg-indigo-300">
-              Creator
-            </span>
-            <span className="text-xs font-light inline-block py-1 px-2 uppercase rounded-full text-black bg-red-300">
-              Charity
-            </span>
-            <span className="text-xs font-light inline-block py-1 px-2 uppercase rounded-full text-black bg-yellow-300">
-              CryptoKids
-            </span>
-          </div>
-          <div className="w-full h-6 rounded-lg mt-3">
-            <div className="w-2/12 h-full rounded-l bg-indigo-400 items-center justify-center text-md font-light  text-black bg-pink-300 inline-flex">
-              {splits.creator}%
-            </div>
-            <div className="w-9/12 h-full bg-red-400 items-center justify-center text-md font-light  text-black bg-pink-300 inline-flex">
-              {splits.charity}%
-            </div>
-            <div className="w-1/12 h-full rounded-r bg-yellow-400 items-center justify-center text-md font-light  text-black bg-pink-300  inline-flex">
-              {splits.cryptoKids}%
-            </div>
-          </div>
-        </div>
-      </div>
+      <SplitInfoBar splits={splits} />
     </>
   )
 }

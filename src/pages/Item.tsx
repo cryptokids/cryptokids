@@ -14,6 +14,7 @@ import {
 } from '../state/items'
 import { IWallet } from '../state/near'
 import { MintbaseContext } from '../contexts/mintbase'
+import ListItem from '../components/ListItem'
 
 const ItemPage: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>()
@@ -85,7 +86,12 @@ const ItemPage: React.FC = () => {
         </div>
         {/* Check is me an owner */}
         {metadata.contents.thing?.tokens[0].minter === account.accountId && (
-          <div className="flex flex-row">
+          <div className="flex flex-col">
+            {/* List tokens on the market */}
+            {getItemStatus(metadata.contents) === ItemStatus.unlisted && (
+              <ListItem mintbase={mintbase} item={metadata.contents} />
+            )}
+            {/* Burn tokens */}
             {getItemStatus(metadata.contents) !== ItemStatus.sold && (
               <div className="p-1">
                 <button
@@ -95,18 +101,6 @@ const ItemPage: React.FC = () => {
                   className="uppercase px-8 py-2 border border-blue-600 text-blue-600 max-w-max shadow-sm hover:shadow-lg"
                 >
                   Burn
-                </button>
-              </div>
-            )}
-            {getItemStatus(metadata.contents) === ItemStatus.unlisted && (
-              <div className="p-1">
-                <button
-                  onClick={async () => {
-                    await listAThing(mintbase, metadata.contents)
-                  }}
-                  className="uppercase px-8 py-2 border border-blue-600 text-blue-600 max-w-max shadow-sm hover:shadow-lg"
-                >
-                  List
                 </button>
               </div>
             )}
