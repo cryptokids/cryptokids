@@ -1,9 +1,9 @@
-import { MintMetadata } from 'mintbase'
+import { MintMetadata, MetadataField } from 'mintbase'
 import { parseNearAmount } from 'near-api-js/lib/utils/format'
 import { formatNearAmount } from 'near-api-js/lib/utils/format'
 import { selectorFamily } from 'recoil'
 import urlcat from 'urlcat'
-import { IWallet, mintbaseContract, network } from './near'
+import { contractId, IWallet, mintbaseContract, network } from './near'
 
 // Item from the API and loaded metadata
 export interface Item {
@@ -41,8 +41,6 @@ export enum ItemStatus {
   sold = 'SOLD',
 }
 
-const defaultPrice = '1000000000000000000000000'
-
 // Buy
 
 // Check if user can buy a token from an item
@@ -70,15 +68,20 @@ export const burnTokensOfThing = async (mintbase: IWallet, item: Item) => {
 
 export const listAThing = async (
   mintbase: IWallet,
-  item: Item
+  item: Item,
+  price: number
 ): Promise<boolean> => {
   // We get a first token here, but should list all of them
   let tokenId = item.thing.tokens[0].id
   tokenId = tokenId.split(':')[0]
+  // Transfer price in nero in string
+  const priceYocto = parseNearAmount(String(price))
+  if (priceYocto == null)
+    throw new Error("Price parsing error. Couldn't parse " + price)
   const { data, error } = await mintbase.list(
     tokenId,
     mintbaseContract,
-    defaultPrice,
+    priceYocto,
     {
       autotransfer: true,
     }
@@ -182,6 +185,36 @@ export const priceFromItem = (item: Item): string | null => {
     return null
   }
   return formatNearAmount(`${price}`)
+}
+
+export type IItemSplits = {
+  creator: number
+  charity: number
+  cryptoKids: number
+}
+
+export const splitRevenueFromItem = (item: Item): IItemSplits | null => {
+  /// Inside split field we store 2 contracts ids: CryptoKidsId and charity contractId
+  /// The diference between 100% and sum of this splits is a creator profit
+
+  // @ts-ignore
+  let splits = { ...item.metadata[MetadataField.SplitRevenue] }
+  if (!splits || Object.keys(splits).length != 2) {
+    // Splits should be not empty and containts 2 fields
+    return null
+  }
+  let cryptoKids = 0
+  if (contractId in splits) {
+    cryptoKids = splits[contractId]
+    delete splits[contractId]
+  }
+  if (Object.keys(splits).length != 1) {
+    // We should have only charity contract address
+    return null
+  }
+  const charity = splits[Object.keys(splits)[0]]
+  // Now we need to calculate left
+  return { creator: 100 - charity - cryptoKids, charity, cryptoKids }
 }
 
 // API interaction

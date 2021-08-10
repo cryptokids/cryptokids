@@ -121,9 +121,9 @@ export const mintItem = async ({
     minter.setField(mintbase.MetadataField.Description, description)
     minter.setField(mintbase.MetadataField.SplitRevenue, {
       // Here we need to set our service contract
-      contractId: splits.cryptoKids,
+      [contractId]: splits.cryptoKids,
       // Set charity contract
-      charity: splits.charity,
+      [charity]: splits.charity,
     })
 
     minter.setField(mintbase.MetadataField.Extra, [
